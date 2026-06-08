@@ -18,7 +18,10 @@
             --text-sub: #8E8E93;         /* 控えめなグレー */
             --nav-bg: rgba(28, 28, 30, 0.85); /* 透過性のあるサーフェスカラー */
         }
-
+		
+		*, *::before, *::after {
+		    box-sizing: border-box;
+		}
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             
@@ -32,8 +35,11 @@
 		        radial-gradient(circle at 100% 100%, rgba(60, 60, 0, 1.0) 0%, transparent 20%),
 		        /* 4. 左下：黒 (黒ベースなのでtransparentでOK、または薄いグレー) */
 		        radial-gradient(circle at 0% 100%, rgba(60, 60, 60, 1.0) 0%, transparent 20%);
-
-            height: 100dvh;
+			
+		    background-attachment: fixed; /* グラデーション背景ならfixedでもiPhoneでバグが起きません */
+		    background-size: cover;
+            
+			height: 100dvh;
             color: var(--text-main);
             margin: 0;
             padding: 0;
@@ -46,7 +52,7 @@
 		/* フォーカス時に余計な余白を作らない */
 		html, body {
 			top: 0;
-		    height: 100dvh;
+		    min-height: 100dvh;
 		    overflow-x: hidden; /* 横ズレを物理的に禁止 */
 		    position: relative;
 		}
@@ -54,11 +60,12 @@
         /* --- ページレイアウト（センタリング） --- */
 		#pageContainer {
 		    /* ナビゲーションの高さ(64) + 下の余白(20) + コンテンツとの距離(20) */
-		    padding-bottom: 120px; 
+		    padding-top: calc(20px + env(safe-area-inset-top)); 
+    		padding-bottom: calc(120px + env(safe-area-inset-bottom)); 
 		    display: flex;
 		    flex-direction: column;
 		    align-items: center;
-		    height: 100dvh;
+		    min-height: 100dvh;
 		    touch-action: pan-y;
 		}
 
