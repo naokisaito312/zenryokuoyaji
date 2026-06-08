@@ -116,17 +116,13 @@
 		    content: "";
 		    display: block;
 		    height: calc(120px + env(safe-area-inset-bottom));
+		    flex-shrink: 0;
 		}
 		
         @keyframes pageIn {
             from { opacity: 0; transform: scale(1.10); }
             to { opacity: 1; transform: scale(1); }
         }
-
-		.page-bottom-spacer {
-		    height: 120px;
-		    pointer-events: none;
-		}
 		
 		/* ヘッダー全体の固定とブラー設定 */
 		header {
@@ -1577,7 +1573,6 @@
 	            ＋ 新規メンバーを登録
 	        </button>
 	    </div>
-		<div class="page-bottom-spacer"></div>
 	</section>
 
 
