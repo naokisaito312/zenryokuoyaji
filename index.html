@@ -80,7 +80,6 @@
 		
         /* --- ページレイアウト（センタリング） --- */
 		#pageContainer {
-		    /* ナビゲーションの高さ(64) + 下の余白(20) + コンテンツとの距離(20) */
 		    padding-top: calc(20px + env(safe-area-inset-top)); 
     		padding-bottom: calc(120px + env(safe-area-inset-bottom)); 
 		    display: flex;
@@ -89,7 +88,7 @@
 		    height: auto;
 		    touch-action: pan-y;
 			z-index: 1; /* 背景より手前に出す */
-			
+			margin: 100;
 		}
 
         .page {
@@ -101,7 +100,7 @@
             box-sizing: border-box;
             text-align: center;
             position: absolute;
-            top: 300;
+            top: 0;
 		    left: 0;
         }
 
