@@ -80,7 +80,6 @@
         /* --- ページレイアウト（センタリング） --- */
 		#pageContainer {
 		    padding-top: calc(20px + env(safe-area-inset-top)); 
-    		padding-bottom: calc(200px + env(safe-area-inset-bottom)); 
 		    display: flex;
 		    flex-direction: column;
 		    align-items: center;
@@ -109,13 +108,12 @@
             flex-direction: column;
             align-items: center;
             animation: pageIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-			padding-bottom: calc(180px + env(safe-area-inset-bottom));
         }
 		
 		.page::after {
 		    content: " ";
 		    display: block;
-		    height: calc(300px + env(safe-area-inset-bottom));
+		    height: calc(100px + env(safe-area-inset-bottom));
 		    flex-shrink: 0;
 			background: red;
 		}
