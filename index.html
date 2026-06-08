@@ -110,12 +110,13 @@
             flex-direction: column;
             align-items: center;
             animation: pageIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+			padding-bottom: calc(180px + env(safe-area-inset-bottom));
         }
 		
 		.page::after {
 		    content: "";
 		    display: block;
-		    height: calc(100px + env(safe-area-inset-bottom));
+		    height: calc(120px + env(safe-area-inset-bottom));
 		}
 		
         @keyframes pageIn {
