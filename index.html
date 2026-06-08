@@ -1931,6 +1931,8 @@ function showPage(index) {
     const navItems = document.querySelectorAll('.nav-item');
     const indicator = document.getElementById('navIndicator');
 	let lastIndex = 0; // 前のインデックスを保持
+
+	window.scrollTo(0, 0);
 	
     // 1. ページの表示/非表示を切り替える
     pages.forEach((p, i) => {
