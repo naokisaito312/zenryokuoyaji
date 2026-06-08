@@ -89,6 +89,7 @@
 		    height: auto;
 		    touch-action: pan-y;
 			z-index: 1; /* 背景より手前に出す */
+			
 		}
 
         .page {
@@ -110,7 +111,12 @@
             align-items: center;
             animation: pageIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
+		
+		.page::after {
+		    content: "";
+		    display: block;
+		    height: calc(120px + env(safe-area-inset-bottom));
+		}
         @keyframes pageIn {
             from { opacity: 0; transform: scale(0.98); }
             to { opacity: 1; transform: scale(1); }
