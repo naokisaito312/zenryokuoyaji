@@ -1548,11 +1548,7 @@
 </head>
 
 <body>
-
-<header id="globalHeader">
-    <h2 id="pageTitle"></h2>
-</header>
-
+	
 <div class="fixed-bg"></div>
 	
 <div id="fixedGoalLayer" class="goal-overlay">
@@ -1562,6 +1558,9 @@
 <div id="pageContainer">
 
 	<section class="page active" id="page0">
+		<header>
+		    <h2>メンバー管理</h2>
+		</header>
 		<div class="stage-labels">
 			<span class="label-text">前回受賞</span>
 			<span class="label-text">1st</span>
@@ -1578,6 +1577,9 @@
 
 
 	<section class="page" id="page1">
+		<header>
+	    	<h2>1stステージ</h2>
+	    </header>
 	    <!-- 1. くじ引きエリア -->
 		<div class="lottery-section card">
 	        <span class="section-label">くじ引き</span>
@@ -1603,6 +1605,9 @@
 
 
 	<section class="page" id="page2">
+		<header>
+	    	<h2>2ndステージ</h2>
+	    </header>
 	    <!-- 1. くじ引きエリア -->
 		<div class="lottery-section card">
 	        <span class="section-label">くじ引き</span>
@@ -1628,6 +1633,9 @@
 
 
 	<section class="page" id="page3">
+		<header>
+	    	<h2>3rdステージ</h2>
+	    </header>
 	    <!-- 1. くじ引きエリア -->
 		<div class="lottery-section card">
 	        <span class="section-label">くじ引き</span>
@@ -1651,6 +1659,9 @@
 	    </div>
 	</section>
     <section class="page" id="page4">
+    	<header>
+    		<h2>総合成績</h2>
+    	</header>
     	<div id="resultArea"></div>
     	
 		<!-- 詳細結果エリア -->
@@ -1687,6 +1698,9 @@
     
     
     <section class="page" id="page5">
+    	<header>
+    		<h2>設定</h2>
+    	</header>
         <div class="settings-group">
             <h3 class="settings-title">勝ち点設定</h3>
             <div class="settings-card">
@@ -1760,6 +1774,9 @@
     <div class="nav-item" onclick="showPage(5)">⚙</div>
 </nav>
 
+
+
+
 <script>
 
 // スコア設定の初期値
@@ -1773,14 +1790,6 @@ let scoreSettings = {
     }
 };
 
-const pageTitles = [
-    "メンバー管理",
-    "1stステージ",
-    "2ndステージ",
-    "3rdステージ",
-    "総合成績",
-	"設定"
-];
 const members = [
     { uid:  1, name: "カントク", birth: "1961/1/24" },
     { uid:  2, name: "クロマン", birth: "1984/6/3" },
@@ -1838,6 +1847,7 @@ let memberList = members.map(m => ({
 	stage2: "", score2: 0,
 	stage3: "", score3: 0
 }));
+
 
 /***** 参加プレイヤー *****/
 let playerList = [];
@@ -1929,9 +1939,7 @@ function showPage(index) {
     pages.forEach((p, i) => {
         p.classList.toggle('active', i === index);
     });
-	
 
-	
     // 2. ナビゲーションの見た目を更新する
     navItems.forEach((item, i) => {
         item.classList.toggle('active', i === index);
