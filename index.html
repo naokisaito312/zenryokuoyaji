@@ -125,11 +125,12 @@
 
 		/* ヘッダー全体の固定とブラー設定 */
 		header {
-		    position: sticky;
+		    position: fixed;
 		    top: 0;
-		    z-index: 100;
+		    left: 0;
 		    width: 100%;
-
+		    padding-top: env(safe-area-inset-top);
+		    z-index: 100;
 		    
 		    /* 1. 背景色も少しグラデーションさせると、より自然に消えていきます */
 		    background: linear-gradient(
