@@ -113,7 +113,7 @@
 		.page::after {
 		    content: " ";
 		    display: block;
-		    height: 120;
+		    height: calc(100px + env(safe-area-inset-bottom));
 		    flex-shrink: 0;
 			background: red;
 		}
