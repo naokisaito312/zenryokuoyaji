@@ -44,10 +44,16 @@
             touch-action: pan-y; 
 			overscroll-behavior-x: none;
 			position: fixed;
+			height: 100dvh;
     		width: 100vw;
     		top: 0;
     		left: 0;
 
+			display: flex;
+		    flex-direction: column;
+		    overflow: hidden;
+		    -webkit-tap-highlight-color: transparent;
+			
 			padding-top: env(safe-area-inset-top, 0px);
     		padding-bottom: env(safe-area-inset-bottom, 0px);
     		box-sizing: border-box; /* 高さにpaddingを含める設定 */
@@ -136,7 +142,8 @@
 		    );
 
 		    /* iPhoneのノッチ対策 */
-		    padding-top: env(safe-area-inset-top);
+			padding-top: env(safe-area-inset-top, 0px);
+    		
 		}
 
 		h2 {
@@ -189,6 +196,7 @@
 		    padding: 0 6px; /* 左右に少し遊びを作る */
 		    box-sizing: border-box;
 		    align-items: center;
+			padding-bottom: env(safe-area-inset-bottom, 0px);
 		}
 		
 		/* 枠線専用のレイヤー */
