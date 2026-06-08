@@ -33,6 +33,7 @@
 		        /* 4. 左下：黒 (黒ベースなのでtransparentでOK、または薄いグレー) */
 		        radial-gradient(circle at 0% 100%, rgba(60, 60, 60, 1.0) 0%, transparent 20%);
 
+			top: 0;
             height: 100dvh;
             color: var(--text-main);
             margin: 0;
@@ -45,6 +46,7 @@
 
 		/* フォーカス時に余計な余白を作らない */
 		html, body {
+			top: 0;
 		    height: 100dvh;
 		    overflow-x: hidden; /* 横ズレを物理的に禁止 */
 		    position: relative;
@@ -53,6 +55,7 @@
         /* --- ページレイアウト（センタリング） --- */
 		#pageContainer {
 		    /* ナビゲーションの高さ(64) + 下の余白(20) + コンテンツとの距離(20) */
+			top: 0;
 		    padding-bottom: 120px; 
 		    display: flex;
 		    flex-direction: column;
