@@ -3145,48 +3145,6 @@ window.onload = () => {
     }
 
     showPage(0); // 起動時に名簿を表示
-    
-    // ジャイロセンサーの起動と制御
-	function initGyroscope() {
-	    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-	        // iOS 13+ のための許可リクエスト
-	        DeviceOrientationEvent.requestPermission()
-	            .then(response => {
-	                if (response === 'granted') {
-	                    window.addEventListener('deviceorientation', updateUIByGyro);
-	                }
-	            })
-	            .catch(console.error);
-	    } else {
-	        // iOS以外
-	        window.addEventListener('deviceorientation', updateUIByGyro);
-	    }
-	}
-
-	function updateUIByGyro(e) {
-		let gamma = e.gamma; 
-
-	    // スマホを垂直に持っている時（betaが90度近い時）のgammaの過剰反応を抑える（オプション）
-	    // const moveX = gamma * 0.4; 
-	    
-	    const indicator = document.getElementById('navIndicator');
-	    if (indicator) {
-	        // 重力の方向（左右）に少しだけ遊びを持たせる
-	        indicator.style.setProperty('--gyro-x', `${gamma * 0.3}px`);
-	    }
-
-	    // 枠線の反射（こちらは0.5〜1.0くらいがキラリとして綺麗です）
-	    const bottomNav = document.getElementById('bottomNav');
-	    if (bottomNav) {
-	        const shineAngle = 135 + (gamma * 0.8);
-	        bottomNav.style.setProperty('--border-angle', `${shineAngle}deg`);
-	    }
-	}
-
-	// 最初のクリックでセンサーを有効化する
-	document.addEventListener('click', function() {
-	    initGyroscope();
-	}, { once: true });
 };
 
 </script>
