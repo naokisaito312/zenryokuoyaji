@@ -1964,7 +1964,6 @@ function showPage(index) {
 
         indicator.style.setProperty('--sx', '1.1'); // 横に1.4倍伸びる
         indicator.style.setProperty('--sy', '0.8'); // 縦に0.8倍潰れる
-        indicator.style.opacity = "0.6";
 
         // 2. 途中で一度「逆に」縮ませる（反動をつける）
         setTimeout(() => {
@@ -1976,7 +1975,6 @@ function showPage(index) {
         setTimeout(() => {
             indicator.style.setProperty('--sx', '1.0');
             indicator.style.setProperty('--sy', '1.0');
-            indicator.style.opacity = "1.0";
         }, 500);
 	}
 	lastIndex = index;
