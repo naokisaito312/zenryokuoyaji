@@ -228,7 +228,7 @@
 		    
 		    /* マスク処理：自分の内側だけを削り取る */
 		    -webkit-mask: 
-		        linear-gradient(rgba(255, 255, 255, 0.2) 0 0) content-box, 
+		        linear-gradient(rgba(255, 255, 255, 0.3) 0 0) content-box, 
 		        linear-gradient(#fff 0 0);
 		    -webkit-mask-composite: xor;
 		    mask-composite: exclude;
@@ -279,7 +279,7 @@
 		    position: relative;
 		    z-index: 1002; /* 文字をインジケーターより手前に */
 		    -webkit-tap-highlight-color: transparent;
-		    filter: brightness(0) invert(1);
+		    filter: brightness(0);
 		}
 
 		/* 非アクティブ時の文字色を少し落とす */
