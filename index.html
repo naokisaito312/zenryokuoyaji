@@ -224,12 +224,11 @@
 		    border-radius: 30px; 
 		    padding: 1.0px; /* ここが枠線の太さになる */
 		    
-		    /* 対角線グラデーション（左上・右下が白、右上・左下が黒） */
-		    background: linear-gradient(var(--border-angle, 135deg), white, black 50%, white);
+		    background: rgba(255, 255, 255, 1.0);
 		    
 		    /* マスク処理：自分の内側だけを削り取る */
 		    -webkit-mask: 
-		        linear-gradient(#fff 0 0) content-box, 
+		        linear-gradient(rgba(255, 255, 255, 0.2) 0 0) content-box, 
 		        linear-gradient(#fff 0 0);
 		    -webkit-mask-composite: xor;
 		    mask-composite: exclude;
