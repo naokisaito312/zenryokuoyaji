@@ -2078,9 +2078,10 @@ function renderMemberList() {
             	</button>
             	
             	<div class="member-actions">
-	            	<button class="btn-mvp-mark ${mvpClass}" onclick="toggleTitleHolder(${member.uid})">🏆</button>
+	            	
 			    	
 			    	${isRegistered ? `
+						<button class="btn-mvp-mark ${mvpClass}" onclick="toggleTitleHolder(${member.uid})">🏆</button>
 					    <select class="team-select ${member.stage1 ? 'team-' + member.stage1.toLowerCase() + '-bg' : ''}" 
 					            onchange="changeTeam(${member.uid}, 'stage1', this)">
 					        ${createOptions(member.stage1, teamCounts.stage1)}
