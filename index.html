@@ -3077,46 +3077,6 @@ window.addEventListener('touchend', (e) => {
     showPage(closestIndex);
 }, { passive: true });
 
-function requestOrientationPermission() {
-    // iOS 13以降で必要な許可リクエスト
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-                if (permissionState === 'granted') {
-                    window.addEventListener('deviceorientation', handleOrientation);
-                }
-            })
-            .catch(console.error);
-    } else {
-        // iOS以外のブラウザ
-        window.addEventListener('deviceorientation', handleOrientation);
-    }
-}
-
-function handleOrientation(event) {
-    // beta: 前後の傾き (-180度 〜 180度)
-    // gamma: 左右の傾き (-90度 〜 90度)
-    const beta = event.beta; 
-    const gamma = event.gamma;
-
-    const navIndicator = document.getElementById('navIndicator');
-    const bottomNav = document.getElementById('bottomNav');
-
-    if (navIndicator) {
-        // 例：左右の傾き（gamma）に合わせてインジケーターに光沢（影）をつける
-        navIndicator.style.boxShadow = `${gamma / 2}px 5px 15px rgba(10, 132, 255, 0.5)`;
-        
-        // 例：傾きに合わせて少しだけ位置をずらす（視差効果）
-        navIndicator.style.transform = `translateX(${gamma / 5}px) scale(1.0)`;
-    }
-
-    if (bottomNav) {
-        // 例：傾きに合わせて枠線のグラデーションの角度を変える
-        const angle = 135 + gamma; // 傾きに合わせて角度を計算
-        bottomNav.style.setProperty('--border-angle', `${angle}deg`);
-    }
-}
-
 // 初期化処理（1回にまとめる）
 window.onload = () => {
 	loadFromStorage(); // ストレージから復元
