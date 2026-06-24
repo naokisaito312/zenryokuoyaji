@@ -2342,13 +2342,21 @@ function renderStagePage(stageNum) {
 			if (name.length <= 3) {
 	            // 3文字以下の場合は、全ての文字を大きく改行なし
 	            btn.innerHTML = `<span class="char-first">${name}</span>`;
+	        } else if(name.includes("mosさん")) {
+	            // mosは大文字
+	            const firstThree = name.substring(0, 3);
+	            const rest_a = name.substring(3);
+	            btn.innerHTML = `
+	                <span class="char-first">${firstThree}</span><br>
+	                <span class="char-rest">${rest_a}</span>
+	            `;
 	        } else {
 	            // 4文字以上の場合は、2文字を大きくして改行
 	            const firstTwo = name.substring(0, 2);
-	            const rest = name.substring(2);
+	            const rest_b = name.substring(2);
 	            btn.innerHTML = `
 	                <span class="char-first">${firstTwo}</span><br>
-	                <span class="char-rest">${rest}</span>
+	                <span class="char-rest">${rest_b}</span>
 	            `;
 	        }
 	        
