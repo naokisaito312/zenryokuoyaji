@@ -1835,12 +1835,17 @@
         <div class="settings-group">
         	<h3 class="settings-title">会計用</h3>
 			<div class="qr-container">
-		        <p class="qr-instruction">会計管理者にこのQRコードを読み取ってもらうか、リンクを共有してください。</p>
+				<p class="qr-instruction">ボタンを押すと、登録済みの参加者情報を含んだQRコードが生成されます。会計管理者に読み取ってもらうか、リンクを共有してください。</p>
 		        
-		        <!-- QRコード表示エリア -->
-		        <div class="qr-code-wrapper">
-		            <!-- JavaScriptで制御しやすくするため id="kaikei-qr-img" を追加、初期URLを設定 -->
-		            <img id="kaikei-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/kaikei" alt="会計共有用QRコード" class="qr-code-img">
+		        <!-- 追加：「会計用QRコードを作成」ボタン -->
+		        <button type="button" class="generate-qr-btn" onclick="handlegenerateKaikeiQR()" style="margin-bottom: 15px; padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+		            会計用QRコードを作成
+		        </button>
+		
+		        <!-- QRコード表示エリア（最初は枠だけにしたい場合はCSSで調整してください） -->
+		        <div class="qr-code-wrapper" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+		            <!-- 初期状態は空、またはダミー画像。ここでは非表示用のスタイルを初期値にしています -->
+		            <img id="kaikei-qr-img" src="" alt="会計共有用QRコード" class="qr-code-img" style="display: none; max-width: 200px; height: auto;">
 		        </div>
 		
 		        <!-- リンクコピー用ボタン -->
@@ -3096,54 +3101,61 @@ function importData(event) {
     reader.readAsText(file);
 }
 
+// コピー用などに保持するグローバル変数
+let currentKaikeiDataText = "";
 
-// 1. 固定URLの定義
-const kaikeiUrl = "https://naokisaito312.github.io/zenryokuoyaji/kaikei.html";
-
-// 2. 「登録済」の参加者20名分の配列（例）
-const registeredMembers = [
-    "山田 太郎", "佐藤 次郎", "鈴木 一郎", "高橋 花子", "田中 三郎",
-    "伊藤 四郎", "渡辺 五郎", "山本 六郎", "中村 七郎", "小林 八郎",
-    "加藤 九郎", "吉田 十郎", "山田 花子", "佐々木 順子", "山口 敦子",
-    "松本 恵子", "井上 健一", "木村 拓也", "林 雄介", "清水 翔太"
-];
-
-// 3. 関数を実行してQRコードを更新
-updateKaikeiQRCode(kaikeiUrl, registeredMembers);
 /**
- * 会計用QRコードを更新する関数
- * @param {string} baseUrl - ベースとなるURL
- * @param {Array<string>} memberList - 「登録済」の参加者氏名の配列
+ * 「会計用QRコードを作成」ボタンが押されたときの処理
+ */
+function handlegenerateKaikeiQR() {
+    // 1. 固定のベースURL
+    const kaikeiUrl = "https://naokisaito312.github.io/zenryokuoyaji/kaikei.html";
+    
+    // 2. 「登録済」の参加者名を取得（アプリのデータ構造に合わせて置き換えてください）
+    // ここでは例として20名分のダミー配列を用意しています
+    const registeredMembers = [
+        "山田 太郎", "佐藤 次郎", "鈴木 一郎", "高橋 花子", "田中 三郎",
+        "伊藤 四郎", "渡辺 五郎", "山本 六郎", "中村 七郎", "小林 八郎",
+        "加藤 九郎", "吉田 十郎", "山田 花子", "佐々木 順子", "山口 敦子",
+        "松本 恵子", "井上 健一", "木村 拓也", "林 雄介", "清水 翔太"
+    ];
+
+    // 3. QRコード生成関数を実行
+    updateKaikeiQRCode(kaikeiUrl, registeredMembers);
+}
+
+/**
+ * 会計用QRコードを実際に生成・表示する関数
  */
 function updateKaikeiQRCode(baseUrl, memberList) {
     if (!baseUrl || !Array.isArray(memberList)) return;
 
-    // 1. QRコードに埋め込むテキストを組み立てる
-    // 例:
-    // https://naokisaito312.github.io/zenryokuoyaji/kaikei.html
-    // 【登録済メンバー】
-    // 田中太郎
-    // 鈴木一郎
-    // ...
-    let qrText = `${baseUrl}\n\n【登録済メンバー】\n` + memberList.join('\n');
+    // テキストデータの組み立て（URL + メンバーリスト）
+    currentKaikeiDataText = `${baseUrl}\n\n【登録済メンバー】\n` + memberList.join('\n');
 
-    // 2. クリップボードコピー用など、必要であればグローバル変数等に保持
-    // (URLだけでなくテキスト全体をコピーさせたい場合などを想定)
-    window.currentKaikeiDataText = qrText; 
-
-    // 3. QRコード生成APIのURLを組み立て (日本語や記号が含まれるため必ずエンコードする)
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
+    // QRコード生成APIのURL組み立て（サイズはドットが潰れないよう少し大きめの250x250に調整）
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentKaikeiDataText)}`;
     
-    // 4. <img> タグの src を書き換えてQRコードを再描画
+    // <img> タグを取得して src を差し替え、要素を表示する
     const qrImg = document.getElementById('kaikei-qr-img');
     if (qrImg) {
         qrImg.src = qrApiUrl;
+        qrImg.style.display = 'block'; // 非表示状態から表示へ切り替え
     }
 }
 
+/**
+ * リンク（またはテキスト）をコピーする関数
+ */
 function copyKaikeiLink() {
-    navigator.clipboard.writeText(currentKaikeiUrl).then(() => {
-        alert('リンクをコピーしました！');
+    if (!currentKaikeiDataText) {
+        alert("先にQRコードを作成してください。");
+        return;
+    }
+    
+    // クリップボードにデータをコピー
+    navigator.clipboard.writeText(currentKaikeiDataText).then(() => {
+        alert('会計用データをコピーしました！');
     }).catch(err => {
         console.error('コピーに失敗しました: ', err);
     });
