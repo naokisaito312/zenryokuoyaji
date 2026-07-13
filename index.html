@@ -1823,7 +1823,6 @@
 				<div class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
 				    <label class="btn-sync" style="cursor: pointer;">
 				        データを読み込む
-				        
 				        <input type="file" id="importFile" accept=".json,application/json,text/plain" onchange="importData(event)" style="display: none;">
 				    </label>
 				</div>
@@ -1838,13 +1837,12 @@
 				<div id="btnCreateQr" class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
 				    <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
 				</div>
-		        <div id="qrCodeWrapper" class="setting-item" style="flex-direction: column; display: none; align-items: center; gap: 4px;">
+		        <div id="qrCodeWrapper" class="setting-item" style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none;">
 		            <!-- ここにQRコードが生成されます -->
 		            <div id="qrcode"></div>
 		        </div>
 		        <button id="btnCopyLink" class="setting-item"  style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none;">
 					<button onclick="copyKaikeiLink()" class="btn-sync">リンクをコピー</button>
-		            
 		        </button>
 			</div>
 	    </div>
