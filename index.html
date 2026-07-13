@@ -1835,22 +1835,14 @@
         <div class="settings-group">
         	<h3 class="settings-title">会計用</h3>
 			<div class="qr-container">
-				<p class="qr-instruction">ボタンを押すと、登録済みの参加者情報を含んだQRコードが生成されます。会計管理者に読み取ってもらうか、リンクを共有してください。</p>
-		        
-		        <!-- 追加：「会計用QRコードを作成」ボタン -->
-		        <button type="button" class="generate-qr-btn" onclick="handlegenerateKaikeiQR()" style="margin-bottom: 15px; padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-		            会計用QRコードを作成
-		        </button>
-		
-		        <!-- QRコード表示エリア（最初は枠だけにしたい場合はCSSで調整してください） -->
-		        <div class="qr-code-wrapper" style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+				<p class="qr-instruction">「会計用QRコードを作成」を押すと、会計管理用のQRコードが生成されます。</p>
+		        <button type="button" class="btn-sync btn-create-page" id="btnCreateQr">会計用QRコードを作成</button>
+		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="display: none;">
+		            <!-- ここにQRコードが生成されます -->
 		            <div id="qrcode"></div>
 		        </div>
-		
-		        <!-- リンクコピー用ボタン -->
-		        <button class="copy-link-btn" onclick="copyKaikeiLink()">
-		            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-		            <span>リンクをコピー</span>
+		        <button type="button" class="copy-link-btn" id="btnCopyLink" style="display: none;">
+		            リンクをコピー
 		        </button>
 		    </div>
 	    </div>
@@ -3157,7 +3149,51 @@ function copyKaikeiLink() {
         alert("コピーに失敗しました。お手数ですがURLを手動でコピーしてください。");
     });
 }
-	
+
+document.getElementById('btnCreateQr').addEventListener('click', function() {
+    // 1. 登録済み参加者のデータを取得
+    const registeredData = Object.values(members).filter(m => m.isRegistered);
+
+    if (registeredData.length === 0) {
+        alert('登録済みの参加者がいません。');
+        return;
+    }
+
+    // 2. データをBase64エンコード
+    const jsonStr = JSON.stringify(registeredData);
+    const encodedData = btoa(encodeURIComponent(jsonStr));
+
+    // 3. 遷移先URLの作成
+    const baseUrl = "https://naokisaito312.github.io/zenryokuoyaji/kaikei.html";
+    const targetUrl = `${baseUrl}?data=${encodedData}`;
+
+    // 4. QRコードのクリアと再生成
+    const qrWrapper = document.getElementById('qrCodeWrapper');
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = ''; // 古いQRを削除
+    qrWrapper.style.display = 'flex';
+
+    new QRCode(qrContainer, {
+        text: targetUrl,
+        width: 140,
+        height: 140,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+
+    // 5. コピーボタンの制御
+    const copyBtn = document.getElementById('btnCopyLink');
+    copyBtn.style.display = 'block';
+    copyBtn.onclick = function() {
+        navigator.clipboard.writeText(targetUrl).then(() => {
+            alert('会計用リンクをコピーしました。');
+        }).catch(err => {
+            console.error('コピー失敗', err);
+        });
+    };
+});
+
 // --- ナビゲーション・ドラッグ＆スナップ処理 ---
 const nav = document.getElementById('bottomNav');
 const indicator = document.getElementById('navIndicator');
