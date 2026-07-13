@@ -84,7 +84,7 @@
 		
         /* --- ページレイアウト（センタリング） --- */
 		#pageContainer {
-		    padding-top: calc(100px + env(safe-area-inset-top)); 
+		    padding-top: calc(env(safe-area-inset-top)); 
 		    display: flex;
 		    flex-direction: column;
 		    align-items: center;
@@ -103,7 +103,7 @@
             text-align: center;
 		    position: absolute;
 
-		    padding-top: 100px;
+		    padding-top: 110px;
             top: 0;
 		    left: 0;
         }
@@ -119,7 +119,7 @@
 			content: " ";
 		    display: block;
 		    /* 背景色を透明にし、高さをセーフエリア + ナビゲーションの高さ以上に調整 */
-		    height: calc(200px + env(safe-area-inset-bottom));
+		    height: calc(env(safe-area-inset-bottom));
 		    flex-shrink: 0;
 		    background: transparent !important; /* redから変更 */
 		}
@@ -136,7 +136,7 @@
 		    left: 0;
 		    width: 100%;
 		    padding-top: env(safe-area-inset-top);
-			margin: 0 !important;
+			  margin: 0 !important;
 		    z-index: 100;
 		    
 		    /* 1. 背景色も少しグラデーションさせると、より自然に消えていきます */
@@ -181,7 +181,7 @@
 		    /* レイアウト調整 */
 		    width: 100%;
 		    margin: 0 !important;
-		    padding: 15px 0 36px 0; /* 上下の余白（下はグラデーションにかかる分広め） */
+		    padding: 10px 0 32px 0; /* 上下の余白（下はグラデーションにかかる分広め） */
 		    font-size: 1.2rem;
 		    font-weight: 700;
 		    letter-spacing: 0.05em;
