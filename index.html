@@ -3095,19 +3095,46 @@ function importData(event) {
     // iOS/Safari/Edgeで最も安定する実行タイミング
     reader.readAsText(file);
 }
-	
-let currentKaikeiUrl = "https://example.com/kaikei";
-// index.html のQRコードを更新する関数
-function updateKaikeiQRCode(newUrl) {
-    if (!newUrl) return;
+
+
+// 1. 固定URLの定義
+const kaikeiUrl = "https://naokisaito312.github.io/zenryokuoyaji/kaikei.html";
+
+// 2. 「登録済」の参加者20名分の配列（例）
+const registeredMembers = [
+    "山田 太郎", "佐藤 次郎", "鈴木 一郎", "高橋 花子", "田中 三郎",
+    "伊藤 四郎", "渡辺 五郎", "山本 六郎", "中村 七郎", "小林 八郎",
+    "加藤 九郎", "吉田 十郎", "山田 花子", "佐々木 順子", "山口 敦子",
+    "松本 恵子", "井上 健一", "木村 拓也", "林 雄介", "清水 翔太"
+];
+
+// 3. 関数を実行してQRコードを更新
+updateKaikeiQRCode(kaikeiUrl, registeredMembers);
+/**
+ * 会計用QRコードを更新する関数
+ * @param {string} baseUrl - ベースとなるURL
+ * @param {Array<string>} memberList - 「登録済」の参加者氏名の配列
+ */
+function updateKaikeiQRCode(baseUrl, memberList) {
+    if (!baseUrl || !Array.isArray(memberList)) return;
+
+    // 1. QRコードに埋め込むテキストを組み立てる
+    // 例:
+    // https://naokisaito312.github.io/zenryokuoyaji/kaikei.html
+    // 【登録済メンバー】
+    // 田中太郎
+    // 鈴木一郎
+    // ...
+    let qrText = `${baseUrl}\n\n【登録済メンバー】\n` + memberList.join('\n');
+
+    // 2. クリップボードコピー用など、必要であればグローバル変数等に保持
+    // (URLだけでなくテキスト全体をコピーさせたい場合などを想定)
+    window.currentKaikeiDataText = qrText; 
+
+    // 3. QRコード生成APIのURLを組み立て (日本語や記号が含まれるため必ずエンコードする)
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
     
-    // 1. 内部のURL変数を更新
-    currentKaikeiUrl = newUrl;
-    
-    // 2. QRコード生成APIのURLを組み立て (URLエンコードを行う)
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(newUrl)}`;
-    
-    // 3. <img> タグの src を書き換えてQRコードを再描画
+    // 4. <img> タグの src を書き換えてQRコードを再描画
     const qrImg = document.getElementById('kaikei-qr-img');
     if (qrImg) {
         qrImg.src = qrApiUrl;
