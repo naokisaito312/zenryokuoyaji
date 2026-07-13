@@ -3174,20 +3174,25 @@ function handlegenerateKaikeiQR() {
         return { name: '不明' };
     });
     
-    // 3. 暗号化手順: JSON化 -> モダンなUTF-8エンコード -> Base64変換
+				// 3. 暗号化手順: JSON化 -> モダンなUTF-8エンコード -> Base64変換
 				const jsonStr = JSON.stringify(formattedPlayers);
-
-				/* --- 新しいコード（Safari対応） --- */
+				
+				/* --- 新しいコード（Safari対応・安全版） --- */
 				const encoder = new TextEncoder();
 				const uint8Array = encoder.encode(jsonStr);
-				// Uint8Arrayを安全にBase64に変換
-				const base64Data = btoa(String.fromCharCode(...uint8Array));
 				
-				// 4. kaikei.html への絶対パスURLを生成（パラメータ名は 'data'）
+				// 【修正】スプレッド構文（...）を使わず、安全にBase64用文字列に変換する
+				let binaryStr = "";
+				for (let i = 0; i < uint8Array.byteLength; i++) {
+				    binaryStr += String.fromCharCode(uint8Array[i]);
+				}
+				const base64Data = btoa(binaryStr);
+				
+				// 4. kaikei.html への絶対パスURLを生成
 				const currentUrl = window.location.href;
 				const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-				generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${encodeURIComponent(base64Data)}`; // URLパラメータ用に一応エンコード
-    
+				generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${encodeURIComponent(base64Data)}`;
+				
 				setTimeout(() => {
 				    // 5. すでに表示されているQRコードがあればクリア
 				    const qrContainer = document.getElementById("qrcode");
