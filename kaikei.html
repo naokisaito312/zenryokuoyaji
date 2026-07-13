@@ -111,29 +111,35 @@
 <script>
     // 1. URLパラメータからデータを抽出してデコード
     function getParams() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const base64Data = urlParams.get('data');
-        if (!base64Data) return null;
-        try {
-            // Base64をバイナリ（Uint8Array）に戻す
-            const binaryStr = atob(decodeURIComponent(base64Data));
-            const len = binaryStr.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryStr.charCodeAt(i);
+            const urlParams = new URLSearchParams(window.location.search);
+            const rawData = urlParams.get('data');
+            if (!rawData) return null;
+            
+            try {
+                // URLParamsで取得した時点で大体のブラウザは自動デコード済みですが、
+                // 念のため二重エンコード対策を含めて安全にデコードします
+                const base64Data = rawData.includes('%') ? decodeURIComponent(rawData) : rawData;
+                
+                // Base64をバイナリ（Uint8Array）に戻す
+                const binaryStr = atob(base64Data);
+                const len = binaryStr.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryStr.charCodeAt(i);
+                }
+        
+                // UTF-8としてデコード
+                const decoder = new TextDecoder('utf-8');
+                const jsonStr = decoder.decode(bytes);
+        
+                // JSONパースして元のオブジェクトに戻す
+                return JSON.parse(jsonStr);
+            } catch (e) {
+                console.error("データデコードエラー:", e);
+                return null;
             }
-    
-            // UTF-8としてデコード
-            const decoder = new TextDecoder('utf-8');
-            const jsonStr = decoder.decode(bytes);
-    
-            // JSONパースして元のオブジェクトに戻す
-            return JSON.parse(jsonStr);
-        } catch (e) {
-            console.error("データデコードエラー:", e);
-            return null;
         }
-    }
+
 
     // 2. 画面の更新処理
     function updateSummary(members) {
