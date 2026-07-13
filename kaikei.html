@@ -4,90 +4,111 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 	<title>全力オヤジ祭り 会計管理システム</title>
-	<style>
-        :root {
-            --bg-color: #000000;
-            --surface-color: #1C1C1E;
-            --accent-color: #0A84FF;
-            --text-main: #F2F2F7;
-            --text-sub: #8E8E93;
-            --success-color: #34C759; /* iOSシステムグリーン */
-        }
-		*, *::before, *::after { box-sizing: border-box; }
-		html, body {
-		    margin: 0; padding: 0; width: 100%; min-height: 100dvh; 
-		    background-color: #000000; color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow-x: hidden;
-		}
-		.fixed-bg {
-		    position: fixed; top: 0; left: 0; width: 100%; height: 120%;
-		    background-image:
-		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 0.6) 0%, transparent 30%),
-		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 0.6) 0%, transparent 30%);
-		    background-size: cover; z-index: -1; pointer-events: none;
-		}
-		header {
-		    position: fixed; top: 0; left: 0; width: 100%;
-		    padding-top: env(safe-area-inset-top); z-index: 100;
-		    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
-		    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-		}
-		h2 {
-		    margin: 0; padding: 20px 0; font-size: 1.2rem; font-weight: 700;
-		    text-align: center; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
-		}
-		#pageContainer {
-		    padding: calc(70px + env(safe-area-inset-top)) 16px 40px 16px;
-		    display: flex; flex-direction: column; align-items: center; width: 100%;
-		}
-        .card {
-            background: var(--surface-color); border-radius: 16px;
-            padding: 18px; width: 100%; max-width: 540px;
-            border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-		.list-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
-		.member-card {
-		    display: flex; align-items: center; justify-content: space-between;
-		    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-		    border-radius: 12px; padding: 12px 16px; transition: all 0.3s ease;
-		}
-        .member-card.paid {
-            border-color: var(--success-color);
-            background: rgba(52, 199, 89, 0.05);
-        }
-		.member-detail { display: flex; flex-direction: column; gap: 2px; }
-		.member-name { font-size: 16px; font-weight: 600; color: #FFFFFF; }
-		.member-age { font-size: 12px; color: var(--text-sub); }
-		
-        /* トグルスイッチのスタイル */
-        .switch { position: relative; width: 75px; height: 32px; flex-shrink: 0; }
-		.switch input { opacity: 0; width: 0; height: 0; }
-		.switch label {
-		    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-		    background-color: #3A3A3C; transition: .3s; border-radius: 34px;
-            display: flex; align-items: center; justify-content: flex-end;
-            padding-right: 10px; font-size: 12px; font-weight: bold; color: var(--text-sub);
-		}
-		.switch label:before {
-		    position: absolute; content: ""; height: 26px; width: 26px;
-		    left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-		}
-		.switch input:checked + label {
-            background-color: var(--success-color);
-            justify-content: flex-start; padding-left: 10px; color: #fff;
-        }
-		.switch input:checked + label:before { transform: translateX(43px); }
-        
-        .summary-box {
-            display: flex; justify-content: space-between; margin-bottom: 16px;
-            font-size: 14px; color: var(--text-sub); border-bottom: 1px solid #2C2C2E;
-            padding-bottom: 10px;
-        }
-        .summary-item span { color: var(--text-main); font-weight: bold; font-size: 16px; }
-        .error-msg { color: #FF453A; text-align: center; margin-top: 20px; }
-	</style>
+<style>
+    :root {
+        --bg-color: #000000;
+        --surface-color: #1C1C1E;
+        --accent-color: #0A84FF;
+        --text-main: #F2F2F7;
+        --text-sub: #8E8E93;
+        --success-color: #34C759; /* iOSシステムグリーン */
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+        margin: 0; padding: 0; width: 100%; min-height: 100dvh; 
+        background-color: #000000; color: var(--text-main);
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow-x: hidden;
+    }
+    .fixed-bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 120%;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 0.6) 0%, transparent 30%),
+            radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 0.6) 0%, transparent 30%);
+        background-size: cover; z-index: -1; pointer-events: none;
+    }
+    header {
+        position: fixed; top: 0; left: 0; width: 100%;
+        padding-top: env(safe-area-inset-top); z-index: 100;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+        backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    }
+    h2 {
+        margin: 0; padding: 12px 0 6px 0; font-size: 1.1rem; font-weight: 700;
+        text-align: center; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+    }
+    #pageContainer {
+        /* 上部ヘッダーの余白を少し詰め、下部の余白も最小限に */
+        padding: calc(60px + env(safe-area-inset-top)) 10px 10px 10px;
+        display: flex; flex-direction: column; align-items: center; width: 100%;
+    }
+    .card {
+        background: var(--surface-color); border-radius: 14px;
+        padding: 12px; width: 100%; max-width: 540px;
+        border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    
+    /* 💡 1列から「横2列」のグリッドに変更して縦幅を大幅削減 */
+    .list-container { 
+        width: 100%; 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 6px; 
+    }
+    
+    /* 💡 高さと余白をギリギリまでコンパクト化 */
+    .member-card {
+        display: flex; align-items: center; justify-content: space-between;
+        background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px; 
+        padding: 6px 8px; /* 上下6px、左右8pxに縮小 */
+        height: 42px;    /* 高さを42pxで固定し均等配置 */
+        transition: all 0.2s ease;
+    }
+    .member-card.paid {
+        border-color: var(--success-color);
+        background: rgba(52, 199, 89, 0.08);
+    }
+    .member-detail { 
+        display: flex; flex-direction: column; gap: 0px; 
+        overflow: hidden; white-space: nowrap; text-overflow: ellipsis; /* 文字溢れ対策 */
+        flex-grow: 1;
+        padding-right: 4px;
+    }
+    /* 💡 フォントサイズを微調整 */
+    .member-name { font-size: 13px; font-weight: 600; color: #FFFFFF; }
+    .member-age { font-size: 10px; color: var(--text-sub); }
+    
+    /* 💡 トグルスイッチも一回り小さくミニマルに */
+    .switch { position: relative; width: 52px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch label {
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #3A3A3C; transition: .2s; border-radius: 24px;
+        display: flex; align-items: center; justify-content: flex-end;
+        padding-right: 6px; font-size: 10px; font-weight: bold; color: var(--text-sub);
+    }
+    .switch label:before {
+        position: absolute; content: ""; height: 18px; width: 18px;
+        left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+    .switch input:checked + label {
+        background-color: var(--success-color);
+        justify-content: flex-start; padding-left: 6px; color: #fff;
+    }
+    /* 💡 移動距離をスイッチの縮小に合わせて調整 */
+    .switch input:checked + label:before { transform: translateX(28px); }
+    
+    .summary-box {
+        display: flex; justify-content: space-between; margin-bottom: 10px;
+        font-size: 13px; color: var(--text-sub); border-bottom: 1px solid #2C2C2E;
+        padding-bottom: 8px;
+    }
+    .summary-item span { color: var(--text-main); font-weight: bold; font-size: 15px; }
+    .error-msg { color: #FF453A; text-align: center; margin-top: 20px; }
+</style>
+
 </head>
 <body>
 <div class="fixed-bg"></div>
@@ -184,15 +205,16 @@
             card.id = `member-${index}`;
 
             card.innerHTML = `
-                <div class="member-detail">
-                    <span class="member-name">${member.name || '不明'}</span>
-                    <span class="member-age">${member.age || ''}</span>
-                </div>
-                <div class="switch">
-                    <input type="checkbox" id="chk-${index}">
-                    <label for="chk-${index}">未</label>
-                </div>
-            `;
+                    <div class="member-detail">
+                        <span class="member-name">${member.name || '不明'}</span>
+                        ${member.age ? `<span class="member-age">${member.age}</span>` : ''}
+                    </div>
+                    <div class="switch">
+                        <input type="checkbox" id="chk-${index}">
+                        <label for="chk-${index}">未</label>
+                    </div>
+                `;
+
 
             listContainer.appendChild(card);
 
