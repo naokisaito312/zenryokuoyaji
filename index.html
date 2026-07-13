@@ -3107,22 +3107,27 @@ function handlegenerateKaikeiQR() {
         return;
     }
 
-    // ⭐【修正ポイント】オブジェクトの配列から「名前」の文字列だけを抽出する
-    // ※お使いのデータ構造に合わせて .name の部分を .username や .text などに変更してください
-    const memberNames = currentMembers.map(member => {
+    // ⭐【修正のキモ】新しい kaikei.html が求める { name, age } の配列構造に変換する
+    const formattedMembers = currentMembers.map(member => {
         if (typeof member === 'object' && member !== null) {
-            return member.name; // 例: { id: 1, name: "田中" } のような構造の場合
+            return {
+                name: member.name || '名前なし',
+                age: member.age || '' // 年齢データがあれば入れる
+            };
         }
-        return member; // すでに文字列の場合はそのまま返す
+        // もしすでに文字列（単なる名前の配列）だった場合のフォールバック
+        return { name: member, age: '' };
     });
-
-    // 2. メンバーの名前一覧をカンマ区切りの文字列にしてURLエンコード
-    const membersStr = encodeURIComponent(memberNames.join(','));
     
-    // 3. kaikei.html への絶対パスURLを生成
+    // ⭐ 新しい暗号化手順: JSON化 -> 特殊文字対策のエンコード -> Base64変換(btoa)
+    const jsonStr = JSON.stringify(formattedMembers);
+    const utf8Str = unescape(encodeURIComponent(jsonStr));
+    const base64Data = btoa(utf8Str);
+    
+    // 3. kaikei.html への絶対パスURLを生成（パラメータ名を 'data' に変更）
     const currentUrl = window.location.href;
     const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-    generatedKaikeiUrl = `${baseUrl}/kaikei.html?members=${membersStr}`;
+    generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
     
     // 4. すでに表示されているQRコードがあればクリア
     const qrContainer = document.getElementById("qrcode");
