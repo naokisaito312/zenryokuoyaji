@@ -3096,6 +3096,33 @@ function importData(event) {
     reader.readAsText(file);
 }
 
+// index.html のQRコードを更新する関数
+function updateKaikeiQRCode() {
+    // 1. 「登録済」のメンバーの名前だけを集めて配列にする
+    // ※お使いのデータ構造に合わせて、filterやmapの条件は調整してください。
+    const registeredNames = memberList
+        .filter(m => m.status === "登録済")
+        .map(m => m.name); // 例: ["田中", "佐藤", "鈴木"...]
+
+    // 2. 名前をカンマ区切りの文字列にする -> "田中,佐藤,鈴木"
+    const namesString = registeredNames.join(',');
+
+    // 3. URLに載せられるように特殊な文字を変換（エンコード）する
+    const encodedNames = encodeURIComponent(namesString);
+
+    // 4. ベースとなるURLにパラメータとして付与する
+    const targetUrl = `https://naokisaito312.github.io/zenryokuoyaji/kaikei.html?members=${encodedNames}`;
+
+    // 5. QRコードAPIのURLを作成して、imgタグのsrcにセットする
+    const qrImgElement = document.querySelector('.qr-code-img');
+    if (qrImgElement) {
+        qrImgElement.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(targetUrl)}`;
+    }
+    
+    // （任意）コピーボタン用のURLも更新する場合はここで保持する
+    window.generatedKaikeiUrl = targetUrl;
+}
+
 function copyKaikeiLink() {
     // 共有したいURL（実際の動的なURLに置き換えてください）
     const shareUrl = "https://example.com/kaikei"; 
