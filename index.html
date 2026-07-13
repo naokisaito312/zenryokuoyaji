@@ -129,7 +129,11 @@
             to { opacity: 1; transform: scale(1); }
         }
 		
-		/* ヘッダー全体の固定とブラー設定 */
+		/* ==========================================================
+   		1. 通常のブラウザ表示時のスタイル（ベースライン）
+  		   ========================================================== */
+
+		/* 通常ブラウザ時はシステムエリア（黒ベタ）の分の高さが不要なため、コンパクトに設計 */
 		header {
 		    position: fixed;
 		    top: 0;
@@ -138,57 +142,55 @@
 		    margin: 0 !important;
 		    z-index: 100;
 		    
-		    /* 💡【重要】グラデーションの基準となる全体の高さを、ブラウザ/PWA問わず「110px」に完全固定 */
-		    height: calc(110px + max(env(safe-area-inset-top), 47px));
+		    /* 通常ブラウザ時：グラデーションと文字の合計高さを「64px」にカチッと固定 */
+		    height: 64px;
 		    
-		    /* 1. 背景色も少しグラデーションさせると、より自然に消えてしていきます */
 		    background: linear-gradient(
 		        to bottom, 
 		        rgba(0, 0, 0, 0.4) 0%, 
 		        rgba(0, 0, 0, 0.1) 80%, 
 		        transparent 100%
 		    );
-		
-		    /* 2. 基本のぼかし設定 */
 		    backdrop-filter: blur(15px);
 		    -webkit-backdrop-filter: blur(15px);
 		
-		    /* 3. 【重要】ぼかし自体をグラデーションで切り取る設定 */
-		    -webkit-mask-image: linear-gradient(
-		        to bottom, 
-		        black 0%, 
-		        black 60%, 
-		        transparent 100%
-		    );
-		    mask-image: linear-gradient(
-		        to bottom, 
-		        black 0%, 
-		        black 60%, 
-		        transparent 100%
-		    );
+		    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+		    mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
 		}
 		
 		h2 {
-		    /* 💡ヘッダー自体が固定されているので、stickyではなく絶対配置で位置を完全に同期させる */
 		    position: absolute;
-		    /* 💡前のステップで解説したmax()を使い、上端の文字開始位置をブラウザ/PWAで完全に一致させる */
-		    top: calc(15px + max(env(safe-area-inset-top), 47px));
+		    /* 通常ブラウザ時：上端から16pxの綺麗な位置に固定 */
+		    top: 16px;
 		    left: 0;
-		    
-		    /* レイアウト調整 */
 		    width: 100%;
 		    margin: 0 !important;
-		    padding: 0; /* paddingでの無理な高さ稼ぎをやめ、位置はtopで制御 */
+		    padding: 0;
 		    font-size: 1.2rem;
 		    font-weight: 700;
 		    letter-spacing: 0.05em;
 		    color: #FFFFFF;
 		    text-align: center;
 		    background: transparent !important;
-		    
 		    text-shadow: 
-		        2px 2px 4px rgba(0, 0, 0, 0.8),   /* 基本の影 */
-		        0px 0px 10px rgba(0, 0, 0, 0.5); /* 全体的な縁取り効果 */
+		        2px 2px 4px rgba(0, 0, 0, 0.8),
+		        0px 0px 10px rgba(0, 0, 0, 0.5);
+		}
+		
+		
+		/* ==========================================================
+		   2. PWA（ホーム画面から起動）された時だけのスタイル上書き
+		   ========================================================== */
+		@media (display-mode: standalone) {
+		    header {
+		        /* PWA全画面時：ベースの64pxに、iPhone固有のセーフエリア（約47px）を動的にプラス */
+		        height: calc(64px + env(safe-area-inset-top));
+		    }
+		    
+		    h2 {
+		        /* PWA全画面時：文字の開始位置をセーフエリア（ノッチ）の真下に動的スライド */
+		        top: calc(16px + env(safe-area-inset-top));
+		    }
 		}
 
 		/* ナビゲーション全体の親要素 */
