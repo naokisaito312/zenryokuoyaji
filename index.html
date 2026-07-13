@@ -85,39 +85,52 @@
         /* --- ページレイアウト（センタリング） --- */
 		/* 通常のブラウザ時のメインエリアの余白 */
 		#pageContainer {
-		    padding-top: 76px; /* ヘッダーの高さ 64px + 少しの余白 12px */
-		    padding-bottom: 20px;
-		    padding-left: 16px;
-		    padding-right: 16px;
-		    display: flex; 
-		    flex-direction: column; 
-		    align-items: center; 
-		    width: 100%;
+		    position: relative; /* 子要素の基準にする */
+		    width: 100vw;
+		    max-width: 540px;
+		    height: 100vh;      /* 画面いっぱいに広げる */
+		    overflow: hidden;
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    background-color: var(--background-color);
 		}
-		
-		/* PWA起動時だけ、iPhoneのノッチと底面バーのセーフエリアを正確にプラスする */
+		/* ｐWA時のメインエリアの余白 */
 		@media (display-mode: standalone) {
 		    #pageContainer {
-		        padding-top: calc(76px + env(safe-area-inset-top));
-		        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+		        /* padding-top: calc(76px + env(safe-area-inset-top)); */
 		    }
 		}
 
-        .page {
-            display: none;
-            width: 100%;
-            max-width: 540px; /* スマホで最も見やすい幅 */
-            padding: 0px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        .page.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: pageIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
+		.page {
+		    display: none;
+		    width: 100%;
+		    max-width: 540px;
+		    box-sizing: border-box;
+		    text-align: center;
+		    
+		    /* ⭕ 絶対配置を復活させ、画面全体に広げる */
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+		    bottom: 0;
+		    
+		    /* ⭕ ここでヘッダー分（76px）とノッチ分の余白を確実に確保する */
+		    padding-top: calc(76px + env(safe-area-inset-top));
+		    padding-left: 16px;
+		    padding-right: 16px;
+		    padding-bottom: 24px;
+		    
+		    overflow-y: auto; /* コンテンツが長い場合はページ内でスクロール */
+		}
+		
+		.page.active {
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    animation: pageIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+		}
 		
 		.page::after {
 			content: " ";
@@ -146,7 +159,7 @@
 		    z-index: 100;
 		    
 		    /* 通常ブラウザ時：グラデーションと文字の合計高さを「64px」にカチッと固定 */
-		    height: 64px;
+		    height: calc(64px + env(safe-area-inset-top));
 		    
 		    background: linear-gradient(
 		        to bottom, 
