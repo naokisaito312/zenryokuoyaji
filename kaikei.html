@@ -111,37 +111,47 @@
 <script>
     // 1. URLパラメータからデータを抽出してデコード
     function getParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let rawData = urlParams.get('data');
-            if (!rawData) return null;
-            
-            try {
-                // 💡【強力な対策】% が完全に消えるまで最大3回デコードを繰り返す（二重エンコード対策）
-                let maxLoops = 3;
-                while (rawData.includes('%') && maxLoops > 0) {
-                    rawData = decodeURIComponent(rawData);
-                    maxLoops--;
-                }
-                
-                // Base64をバイナリ（Uint8Array）に戻す
-                const binaryStr = atob(rawData);
-                const len = binaryStr.length;
-                const bytes = new Uint8Array(len);
-                for (let i = 0; i < len; i++) {
-                    bytes[i] = binaryStr.charCodeAt(i);
-                }
+    try {
+        // 1. URLの文字列から直接「data=」の降ろしのデータを力技で取得する
+        const href = window.location.href;
+        const dataIndex = href.indexOf('data=');
+        if (dataIndex === -1) return null;
         
-                // UTF-8としてデコード
-                const decoder = new TextDecoder('utf-8');
-                const jsonStr = decoder.decode(bytes);
+        let rawData = href.substring(dataIndex + 5); // 「data=」の5文字分後ろから末尾まで切り出し
         
-                // JSONパースして元のオブジェクトに戻す
-                return JSON.parse(jsonStr);
-            } catch (e) {
-                console.error("データデコードエラー:", e);
-                return null;
-            }
+        // 2. URLエンコード（%3D など）を完全に元の文字（= など）に戻す
+        while (rawData.includes('%')) {
+            rawData = decodeURIComponent(rawData);
         }
+        
+        // 3. 【重要】URLのやり取りで「+」が「 」（スペース）に化けるSafari等のバグを強制修正
+        rawData = rawData.replace(/ /g, '+');
+        
+        // 4. 末尾の「=」（パディング）が削れていた場合の補完（Base64の整合性チェック）
+        while (rawData.length % 4 !== 0) {
+            rawData += '=';
+        }
+        
+        // 5. バイナリ（Uint8Array）に戻す
+        const binaryStr = atob(rawData);
+        const len = binaryStr.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+        }
+
+        // 6. UTF-8としてデコード
+        const decoder = new TextDecoder('utf-8');
+        const jsonStr = decoder.decode(bytes);
+
+        // JSONパースして返す
+        return JSON.parse(jsonStr);
+    } catch (e) {
+        console.error("データデコードエラー（詳細）:", e);
+        return null;
+    }
+}
+
 
 
 
