@@ -3100,38 +3100,6 @@ function importData(event) {
     reader.readAsText(file);
 }
 
-// 例: 「集金管理ページを作成」ボタンが押されたとき、または画面が表示されたときの処理
-function generateAccountingQR(registeredMembers) {
-    // 1. メンバー一覧をカンマ区切りの文字列にしてエンコード
-    const membersStr = encodeURIComponent(registeredMembers.join(','));
-    
-    // 2. kaikei.html への絶対パスのURLを作成 (現在のドメインをベースにする場合)
-    const currentUrl = window.location.href;
-    const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-    const targetUrl = `${baseUrl}/kaikei.html?members=${membersStr}`;
-    
-    // 3. 既存のQRコードがあれば削除してクリア
-    const qrContainer = document.getElementById("qrcode");
-    qrContainer.innerHTML = "";
-    
-    // 4. QRコードの生成
-    new QRCode(qrContainer, {
-        text: targetUrl,
-        width: 140,
-        height: 140,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-    
-    // 5. リンクコピーボタンの動作設定
-    document.getElementById("btn-copy-link").onclick = function() {
-        navigator.clipboard.writeText(targetUrl).then(() => {
-            alert("集金ページのURLをコピーしました！");
-        });
-    };
-}
-	
 // 生成されたURLを保持するためのグローバル変数（コピーボタン等で使用）
 let generatedKaikeiUrl = "";
 
