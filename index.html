@@ -1845,7 +1845,7 @@
 				</div>
 		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none; margin-bottom: 10px;">
 		            <!-- ここにQRコードが生成されます -->
-		            <div id="qrcode" class="qr-code-img"></div>
+		            <div id="qrcode"></div>
 		        </div>
 		        <button class="setting-item" style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none;">
 					<button id="btnCopyLink" onclick="copyKaikeiLink()" class="btn-sync" style="display: none; margin-bottom: 10px;">リンクをコピー</button>
@@ -3144,11 +3144,12 @@ function handlegenerateKaikeiQR() {
         // 6. QRコードを生成
         new QRCode(qrContainer, {
             text: generatedKaikeiUrl,
-            width: 160,
-            height: 160,
+            width: 180,
+            height: 180,
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
+			flex-shrink: 0;
         });
     } else {
         console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
