@@ -1588,8 +1588,8 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         .qr-code-img {
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             display: block;
 			flex-shrink: 0;
         }
@@ -1621,8 +1621,8 @@
 		    background-color: #FFFFFF;
 		    padding: 12px;
 		    border-radius: 8px;
-		    width: 224px; /* 160px + padding分でサイズを固定 */
-		    height: 224px; 
+		    width: 244px; /* 160px + padding分でサイズを固定 */
+		    height: 244px; 
 		    box-sizing: border-box;
 						
 						/* --- iOS Safariの描画バグ対策を追加 --- */
@@ -3226,11 +3226,11 @@ function handlegenerateKaikeiQR() {
 				        // 6. QRコードを生成
 				        new QRCode(qrContainer, {
 				            text: generatedKaikeiUrl,
-				            width: 200,
-				            height: 200,
+				            width: 220,
+				            height: 220,
 				            colorDark : "#000000",
 				            colorLight : "#ffffff",
-				            correctLevel : QRCode.CorrectLevel.M
+				            correctLevel : QRCode.CorrectLevel.L
 				        });
 				    } else {
 				        console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
