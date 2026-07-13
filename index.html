@@ -1607,6 +1607,23 @@
             background-color: #3A3A3C;
             transform: scale(0.98);
         }
+		/* #qrcode の中に自動生成される画像・キャンバスをiPhoneで絶対に潰さないための設定 */
+		#qrcode {
+		    display: block;
+		    width: 180px;  /* QRコードの生成サイズに合わせて調整してください */
+		    height: 180px; /* QRコードの生成サイズに合わせて調整してください */
+		    background-color: #FFFFFF;
+		    padding: 8px;
+		    border-radius: 8px;
+		}
+		
+		#qrcode img, 
+		#qrcode canvas {
+		    width: 100% !important;
+		    height: 100% !important;
+		    display: block !important;
+		    flex-shrink: 0 !important; /* Safariの潰れ対策 */
+		}
 	</style>
 </head>
 
@@ -1837,21 +1854,26 @@
 				</div>
 		    </div>
 	    </div>
-        <div class="settings-group">
-        	<h3 class="settings-title">会計用</h3>
-			<div class="settings-card">
-				<div id="btnCreateQr" class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
-				    <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
-				</div>
-		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none; margin-bottom: 10px;">
-		            <!-- ここにQRコードが生成されます -->
+		<div class="settings-group">
+		    <h3 class="settings-title">会計用</h3>
+		    <div class="settings-card">
+		        <!-- QR作成ボタン -->
+		        <div id="btnCreateQr" class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
+		            <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
+		        </div>
+		        
+		        <!-- QRコード表示エリア（display:none時のバグを防ぐため、ラッパーのスタイルを調整） -->
+		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="display: none; flex-direction: column; align-items: center; gap: 12px; border-bottom: none; margin-bottom: 10px; width: 100%;">
+		            <!-- ここにQRコードが自動生成されます -->
 		            <div id="qrcode"></div>
 		        </div>
-		        <button class="setting-item" style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none;">
-					<button id="btnCopyLink" onclick="copyKaikeiLink()" class="btn-sync" style="display: none; margin-bottom: 10px;">リンクをコピー</button>
-		        </button>
-			</div>
-	    </div>
+		        
+		        <!-- リンクコピーボタン（二重ボタンを解消し、divに変更） -->
+		        <div class="setting-item" style="flex-direction: column; align-items: center; border-bottom: none; padding: 0;">
+		            <button id="btnCopyLink" onclick="copyKaikeiLink()" class="btn-sync" style="display: none; margin-bottom: 10px;">リンクをコピー</button>
+		        </div>
+		    </div>
+		</div>
     </section>
 </div>
 
