@@ -1,175 +1,186 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全力オヤジ祭り 集金管理</title>
-    <style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+	<title>全力オヤジ祭り 会計管理システム</title>
+	<style>
         :root {
-            --primary-navy: #0F172A;
-            --bg-color: #F8FAFC;
-            --card-bg: #FFFFFF;
-            --border-color: #E2E8F0;
-            --text-main: #334155;
-            --text-sub: #64748B;
-            --success: #10B981;
+            --bg-color: #000000;
+            --surface-color: #1C1C1E;
+            --accent-color: #0A84FF;
+            --text-main: #F2F2F7;
+            --text-sub: #8E8E93;
+            --success-color: #34C759; /* iOSシステムグリーン */
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 16px;
+		*, *::before, *::after { box-sizing: border-box; }
+		html, body {
+		    margin: 0; padding: 0; width: 100%; min-height: 100dvh; 
+		    background-color: #000000; color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+		}
+		.fixed-bg {
+		    position: fixed; top: 0; left: 0; width: 100%; height: 120%;
+		    background-image:
+		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 0.6) 0%, transparent 30%),
+		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 0.6) 0%, transparent 30%);
+		    background-size: cover; z-index: -1; pointer-events: none;
+		}
+		header {
+		    position: fixed; top: 0; left: 0; width: 100%;
+		    padding-top: env(safe-area-inset-top); z-index: 100;
+		    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+		    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+		}
+		h2 {
+		    margin: 0; padding: 20px 0; font-size: 1.2rem; font-weight: 700;
+		    text-align: center; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+		}
+		#pageContainer {
+		    padding: calc(70px + env(safe-area-inset-top)) 16px 40px 16px;
+		    display: flex; flex-direction: column; align-items: center; width: 100%;
+		}
+        .card {
+            background: var(--surface-color); border-radius: 16px;
+            padding: 18px; width: 100%; max-width: 540px;
+            border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
+		.list-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+		.member-card {
+		    display: flex; align-items: center; justify-content: space-between;
+		    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+		    border-radius: 12px; padding: 12px 16px; transition: all 0.3s ease;
+		}
+        .member-card.paid {
+            border-color: var(--success-color);
+            background: rgba(52, 199, 89, 0.05);
         }
-
-        h1 {
-            font-size: 20px;
-            color: var(--primary-navy);
-            margin-bottom: 8px;
-            text-align: center;
+		.member-detail { display: flex; flex-direction: column; gap: 2px; }
+		.member-name { font-size: 16px; font-weight: 600; color: #FFFFFF; }
+		.member-age { font-size: 12px; color: var(--text-sub); }
+		
+        /* トグルスイッチのスタイル */
+        .switch { position: relative; width: 75px; height: 32px; flex-shrink: 0; }
+		.switch input { opacity: 0; width: 0; height: 0; }
+		.switch label {
+		    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+		    background-color: #3A3A3C; transition: .3s; border-radius: 34px;
+            display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 10px; font-size: 12px; font-weight: bold; color: var(--text-sub);
+		}
+		.switch label:before {
+		    position: absolute; content: ""; height: 26px; width: 26px;
+		    left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+		}
+		.switch input:checked + label {
+            background-color: var(--success-color);
+            justify-content: flex-start; padding-left: 10px; color: #fff;
         }
-
-        .summary {
-            background: var(--primary-navy);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 16px;
-            font-weight: bold;
+		.switch input:checked + label:before { transform: translateX(43px); }
+        
+        .summary-box {
+            display: flex; justify-content: space-between; margin-bottom: 16px;
+            font-size: 14px; color: var(--text-sub); border-bottom: 1px solid #2C2C2E;
+            padding-bottom: 10px;
         }
-
-        .summary span {
-            font-size: 24px;
-            color: #38BDF8;
-        }
-
-        .member-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* タップしやすい大きめの行 */
-        .member-row {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-
-        .member-name {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        /* 状態を示すバッジ */
-        .status-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            background: #F1F5F9;
-            color: var(--text-sub);
-        }
-
-        /* 払い済み（チェック時）のスタイル */
-        .member-row.paid {
-            border-color: var(--success);
-            background: #F0FDF4;
-        }
-
-        .member-row.paid .status-badge {
-            background: var(--success);
-            color: white;
-        }
-    </style>
+        .summary-item span { color: var(--text-main); font-weight: bold; font-size: 16px; }
+        .error-msg { color: #FF453A; text-align: center; margin-top: 20px; }
+	</style>
 </head>
 <body>
+<div class="fixed-bg"></div>
+<header>
+	<h2>会計用・入金ステータス</h2>
+</header>
 
-<div class="container">
-    <h1>💰 大会集金管理</h1>
-    <div class="summary">
-        回収状況: <span id="paid-count">0</span> / <span id="total-count">0</span> 人
-    </div>
-
-    <div class="member-list" id="member-list">
-        <!-- JSでここにメンバーが並びます -->
+<div id="pageContainer">
+    <div class="card">
+        <div class="summary-box">
+            <div class="summary-item">対象者: <span id="totalCount">0</span> 名</div>
+            <div class="summary-item">入金済: <span id="paidCount" style="color: var(--success-color);">0</span> 名</div>
+        </div>
+        <div id="errorArea" class="error-msg" style="display: none;">参加者データが見つかりません。QRコードを正しくスキャンしてください。</div>
+        <div id="memberList" class="list-container">
+            <!-- JavaScriptでここに動的にリストを生成 -->
+        </div>
     </div>
 </div>
 
 <script>
-    // 1. URLのパラメータからメンバーリストを取得
-    const urlParams = new URLSearchParams(window.location.search);
-    const membersParam = urlParams.get('members');
-    
-    let members = [];
-    if (membersParam) {
-        members = decodeURIComponent(membersParam).split(',');
+    // 1. URLパラメータからデータを抽出してデコード
+    function getParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        if (!dataParam) return null;
+        try {
+            const decodedJson = decodeURIComponent(atob(dataParam));
+            return JSON.parse(decodedJson);
+        } catch (e) {
+            console.error("データデコードエラー:", e);
+            return null;
+        }
     }
 
-    // 2. ローカルストレージから現在の集金状況（済みの人リスト）を読み込む
-    // URLごとに一意にするため、メンバーの文字列をキーのハッシュ代わりに使う
-    const storageKey = `kaikei_paid_${btoa(unescape(encodeURIComponent(membersParam || ''))).substring(0,10)}`;
-    let paidMembers = JSON.parse(localStorage.getItem(storageKey)) || [];
-
-    const listContainer = document.getElementById('member-list');
-    
-    // 3. 画面の初期描画
-    if (members.length === 0) {
-        listContainer.innerHTML = '<p style="text-align:center; color:var(--text-sub);">メンバーデータがありません。大会アプリからURLを再生成してください。</p>';
-    } else {
-        document.getElementById('total-count').textContent = members.length;
-        renderList();
+    // 2. 画面の更新処理
+    function updateSummary(members) {
+        document.getElementById('totalCount').innerText = members.length;
+        const paidCount = members.filter(m => m.isPaid).length;
+        document.getElementById('paidCount').innerText = paidCount;
     }
 
-    function renderList() {
-        listContainer.innerHTML = '';
-        let paidCount = 0;
+    // 3. メイン実行ロジック
+    window.addEventListener('DOMContentLoaded', () => {
+        const memberData = getParams();
+        const listContainer = document.getElementById('memberList');
+        const errorArea = document.getElementById('errorArea');
 
-        members.forEach(name => {
-            const isPaid = paidMembers.includes(name);
-            if (isPaid) paidCount++;
+        if (!memberData || memberData.length === 0) {
+            errorArea.style.display = 'block';
+            return;
+        }
 
-            const row = document.createElement('div');
-            row.className = `member-row ${isPaid ? 'paid' : ''}`;
-            row.innerHTML = `
-                <div class="member-name">${name}</div>
-                <div class="status-badge">${isPaid ? '済' : '未納'}</div>
+        // 各メンバーに入金済フラグ（isPaid）の初期値をセット
+        memberData.forEach(m => m.isPaid = false);
+        updateSummary(memberData);
+
+        // リストの描画
+        memberData.forEach((member, index) => {
+            const card = document.createElement('div');
+            card.className = 'member-card';
+            card.id = `member-${index}`;
+
+            card.innerHTML = `
+                <div class="member-detail">
+                    <span class="member-name">${member.name || '不明'}</span>
+                    <span class="member-age">${member.age || ''}</span>
+                </div>
+                <div class="switch">
+                    <input type="checkbox" id="chk-${index}">
+                    <label for="chk-${index}">未</label>
+                </div>
             `;
 
-            // タップした時の切り替え処理
-            row.onclick = () => togglePaid(name);
-            listContainer.appendChild(row);
+            listContainer.appendChild(card);
+
+            // トグルスイッチの変更イベントイベント
+            const checkbox = card.querySelector(`#chk-${index}`);
+            const label = card.querySelector('label');
+            
+            checkbox.addEventListener('change', (e) => {
+                member.isPaid = e.target.checked;
+                if (member.isPaid) {
+                    card.classList.add('paid');
+                    label.innerText = '済';
+                } else {
+                    card.classList.remove('paid');
+                    label.innerText = '未';
+                }
+                updateSummary(memberData);
+            });
         });
-
-        document.getElementById('paid-count').textContent = paidCount;
-    }
-
-    function togglePaid(name) {
-        if (paidMembers.includes(name)) {
-            // すでに「済」なら「未納」に戻す
-            paidMembers = paidMembers.filter(m => m !== name);
-        } else {
-            // 「未納」なら「済」にする
-            paidMembers.push(name);
-        }
-        // ローカルストレージに保存して再描画
-        localStorage.setItem(storageKey, JSON.stringify(paidMembers));
-        renderList();
-    }
+    });
 </script>
 </body>
 </html>
