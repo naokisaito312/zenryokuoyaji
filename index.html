@@ -3230,7 +3230,7 @@ function handlegenerateKaikeiQR() {
 				            height: 200,
 				            colorDark : "#000000",
 				            colorLight : "#ffffff",
-				            correctLevel : QRCode.CorrectLevel.H
+				            correctLevel : QRCode.CorrectLevel.M
 				        });
 				    } else {
 				        console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
@@ -3258,47 +3258,33 @@ function copyKaikeiLink() {
 }
 
 document.getElementById('btnCreateQr').addEventListener('click', function() {
-    // 1. 登録済み参加者データ（playerList）の存在チェック
-    // ※ playerListがオブジェクトの場合は Object.values(playerList) に変更してください
-    if (!playerList || (Array.isArray(playerList) && playerList.length === 0)) {
-        alert('登録済みの参加者がいません。');
-        return;
+    // 1. まずSafari対策・文字化け対策済みの関数を実行してQRコードとURLを生成する
+    handlegenerateKaikeiQR();
+
+    // ※ handlegenerateKaikeiQRの中でプレイヤーがいない場合の alert や return は処理されるため、
+    // ここでは生成されたあとのラッパーやコピーボタンの表示制御だけを行います。
+    
+    // 2. プレイヤーが存在して無事にURLが生成された場合のみ表示を切り替える
+    // (generatedKaikeiUrl は handlegenerateKaikeiQR 内で値が代入されるグローバル変数である前提)
+    if (typeof generatedKaikeiUrl !== 'undefined' && generatedKaikeiUrl) {
+        const qrWrapper = document.getElementById('qrCodeWrapper');
+        if (qrWrapper) qrWrapper.style.display = 'flex';
+
+        // 3. コピーボタンの制御
+        const copyBtn = document.getElementById('btnCopyLink');
+        if (copyBtn) {
+            copyBtn.style.display = 'block';
+            copyBtn.onclick = function() {
+                navigator.clipboard.writeText(generatedKaikeiUrl).then(() => {
+                    alert('会計用リンクをコピーしました。');
+                }).catch(err => {
+                    console.error('コピー失敗', err);
+                });
+            };
+        }
     }
-
-    // 2. playerListをBase64エンコード
-    const jsonStr = JSON.stringify(playerList);
-    const encodedData = btoa(encodeURIComponent(jsonStr));
-
-    // 3. 遷移先URL（kaikei.html）の作成
-    const baseUrl = "https://naokisaito312.github.io/zenryokuoyaji/kaikei.html";
-    const targetUrl = `${baseUrl}?data=${encodedData}`;
-
-    // 4. QRコードのクリアと再生成
-    const qrWrapper = document.getElementById('qrCodeWrapper');
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = ''; // 古いQRを削除
-    qrWrapper.style.display = 'flex';
-
-    new QRCode(qrContainer, {
-        text: targetUrl,
-        width: 140,
-        height: 140,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-
-    // 5. コピーボタンの制御
-    const copyBtn = document.getElementById('btnCopyLink');
-    copyBtn.style.display = 'block';
-    copyBtn.onclick = function() {
-        navigator.clipboard.writeText(targetUrl).then(() => {
-            alert('会計用リンクをコピーしました。');
-        }).catch(err => {
-            console.error('コピー失敗', err);
-        });
-    };
 });
+
 
 // --- ナビゲーション・ドラッグ＆スナップ処理 ---
 const nav = document.getElementById('bottomNav');
