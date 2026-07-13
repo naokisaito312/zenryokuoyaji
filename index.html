@@ -3273,8 +3273,9 @@ document.getElementById('btnCreateQr').addEventListener('click', function() {
     if (typeof generatedKaikeiUrl !== 'undefined' && generatedKaikeiUrl) {
         const qrWrapper = document.getElementById('qrCodeWrapper');
         if (qrWrapper) qrWrapper.style.display = 'flex';
-
-       
+        
+        const qrLink = document.getElementById('btnCopyLink');
+        if (qrLink) qrLink.style.display = 'flex';
     }
 });
 
@@ -3396,43 +3397,7 @@ window.addEventListener('DOMContentLoaded', function() {
 			correctLevel: QRCode.CorrectLevel.H
 		});
 	}
-
-	// --- リンクをコピーボタンの処理 ---
-	var copyBtn = document.getElementById("copyBtn");
-	if (copyBtn) {
-		// CSSで非表示になってしまっている場合を考慮し、明示的に表示させる
-		copyBtn.style.display = "flex"; 
-
-		copyBtn.addEventListener('click', function() {
-			// iPhone(iOS)でも確実にコピーできる書き方
-			if (navigator.clipboard && navigator.clipboard.writeText) {
-				navigator.clipboard.writeText(shareUrl).then(function() {
-					alert("リンクをコピーしました！");
-				}).catch(function() {
-					fallbackCopy(shareUrl);
-				});
-			} else {
-				fallbackCopy(shareUrl);
-			}
-		});
-	}
 });
-
-// 古いiOS向けのコピー代替処理（念のため）
-function fallbackCopy(text) {
-	var textArea = document.createElement("textarea");
-	textArea.value = text;
-	textArea.style.position = "fixed"; // 画面外に隠す
-	document.body.appendChild(textArea);
-	textArea.select();
-	try {
-		document.execCommand('copy');
-		alert("リンクをコピーしました！");
-	} catch (err) {
-		alert("コピーに失敗しました。URLを直接コピーしてください。");
-	}
-	document.body.removeChild(textArea);
-}
 	
 </script>
 
