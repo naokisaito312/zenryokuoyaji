@@ -3151,19 +3151,18 @@ function copyKaikeiLink() {
 }
 
 document.getElementById('btnCreateQr').addEventListener('click', function() {
-    // 1. 登録済み参加者のデータを取得
-    const registeredData = Object.values(members).filter(m => m.isRegistered);
-
-    if (registeredData.length === 0) {
+    // 1. 登録済み参加者データ（playerList）の存在チェック
+    // ※ playerListがオブジェクトの場合は Object.values(playerList) に変更してください
+    if (!playerList || (Array.isArray(playerList) && playerList.length === 0)) {
         alert('登録済みの参加者がいません。');
         return;
     }
 
-    // 2. データをBase64エンコード
-    const jsonStr = JSON.stringify(registeredData);
+    // 2. playerListをBase64エンコード
+    const jsonStr = JSON.stringify(playerList);
     const encodedData = btoa(encodeURIComponent(jsonStr));
 
-    // 3. 遷移先URLの作成
+    // 3. 遷移先URL（kaikei.html）の作成
     const baseUrl = "https://naokisaito312.github.io/zenryokuoyaji/kaikei.html";
     const targetUrl = `${baseUrl}?data=${encodedData}`;
 
