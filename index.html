@@ -1835,20 +1835,20 @@
         <div class="settings-group">
         	<h3 class="settings-title">会計用</h3>
 			<div class="qr-container">
-                <p class="qr-instruction">会計管理者にこのQRコードを読み取ってもらうか、リンクを共有してください。</p>
-                
-                <!-- QRコード表示エリア -->
-                <div class="qr-code-wrapper">
-                    <!-- ここにJavaScript等で生成したQRコード画像、またはダミー画像を入れます -->
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/kaikei" alt="会計共有用QRコード" class="qr-code-img">
-                </div>
-
-                <!-- リンクコピー用ボタン（あると親切です） -->
-                <button class="copy-link-btn" onclick="copyKaikeiLink()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>リンクをコピー</span>
-                </button>
-            </div>
+		        <p class="qr-instruction">会計管理者にこのQRコードを読み取ってもらうか、リンクを共有してください。</p>
+		        
+		        <!-- QRコード表示エリア -->
+		        <div class="qr-code-wrapper">
+		            <!-- JavaScriptで制御しやすくするため id="kaikei-qr-img" を追加、初期URLを設定 -->
+		            <img id="kaikei-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/kaikei" alt="会計共有用QRコード" class="qr-code-img">
+		        </div>
+		
+		        <!-- リンクコピー用ボタン -->
+		        <button class="copy-link-btn" onclick="copyKaikeiLink()">
+		            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+		            <span>リンクをコピー</span>
+		        </button>
+		    </div>
 	    </div>
     </section>
 </div>
@@ -3095,42 +3095,30 @@ function importData(event) {
     // iOS/Safari/Edgeで最も安定する実行タイミング
     reader.readAsText(file);
 }
-
+	
+let currentKaikeiUrl = "https://example.com/kaikei";
 // index.html のQRコードを更新する関数
-function updateKaikeiQRCode() {
-    // 1. 「登録済」のメンバーの名前だけを集めて配列にする
-    // ※お使いのデータ構造に合わせて、filterやmapの条件は調整してください。
-    const registeredNames = memberList
-        .filter(m => m.status === "登録済")
-        .map(m => m.name); // 例: ["田中", "佐藤", "鈴木"...]
-
-    // 2. 名前をカンマ区切りの文字列にする -> "田中,佐藤,鈴木"
-    const namesString = registeredNames.join(',');
-
-    // 3. URLに載せられるように特殊な文字を変換（エンコード）する
-    const encodedNames = encodeURIComponent(namesString);
-
-    // 4. ベースとなるURLにパラメータとして付与する
-    const targetUrl = `https://naokisaito312.github.io/zenryokuoyaji/kaikei.html?members=${encodedNames}`;
-
-    // 5. QRコードAPIのURLを作成して、imgタグのsrcにセットする
-    const qrImgElement = document.querySelector('.qr-code-img');
-    if (qrImgElement) {
-        qrImgElement.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(targetUrl)}`;
-    }
+function updateKaikeiQRCode(newUrl) {
+    if (!newUrl) return;
     
-    // （任意）コピーボタン用のURLも更新する場合はここで保持する
-    window.generatedKaikeiUrl = targetUrl;
+    // 1. 内部のURL変数を更新
+    currentKaikeiUrl = newUrl;
+    
+    // 2. QRコード生成APIのURLを組み立て (URLエンコードを行う)
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(newUrl)}`;
+    
+    // 3. <img> タグの src を書き換えてQRコードを再描画
+    const qrImg = document.getElementById('kaikei-qr-img');
+    if (qrImg) {
+        qrImg.src = qrApiUrl;
+    }
 }
 
 function copyKaikeiLink() {
-    // 共有したいURL（実際の動的なURLに置き換えてください）
-    const shareUrl = "https://example.com/kaikei"; 
-    
-    navigator.clipboard.writeText(shareUrl).then(() => {
-        alert("会計用共有リンクをコピーしました！");
+    navigator.clipboard.writeText(currentKaikeiUrl).then(() => {
+        alert('リンクをコピーしました！');
     }).catch(err => {
-        console.error("コピーに失敗しました: ", err);
+        console.error('コピーに失敗しました: ', err);
     });
 }
 	
