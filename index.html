@@ -3349,6 +3349,64 @@ window.onload = () => {
     showPage(0); // 起動時に名簿を表示
 };
 
+// 画面の読み込み（DOM）が完全に完了してから実行させる（iOS対策）
+window.addEventListener('DOMContentLoaded', function() {
+	
+	// 共有したいURL（例）
+	var shareUrl = window.location.href; 
+
+	// --- QRコードの生成処理 ---
+	var qrElement = document.getElementById("qrcode");
+	if (qrElement) {
+		// 一度中身を空にする（2重表示・バグ防止対策）
+		qrElement.innerHTML = ""; 
+		
+		// QRコード生成
+		new QRCode(qrElement, {
+			text: shareUrl,
+			width: 160,
+			height: 160,
+			correctLevel: QRCode.CorrectLevel.H
+		});
+	}
+
+	// --- リンクをコピーボタンの処理 ---
+	var copyBtn = document.getElementById("copyBtn");
+	if (copyBtn) {
+		// CSSで非表示になってしまっている場合を考慮し、明示的に表示させる
+		copyBtn.style.display = "flex"; 
+
+		copyBtn.addEventListener('click', function() {
+			// iPhone(iOS)でも確実にコピーできる書き方
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(shareUrl).then(function() {
+					alert("リンクをコピーしました！");
+				}).catch(function() {
+					fallbackCopy(shareUrl);
+				});
+			} else {
+				fallbackCopy(shareUrl);
+			}
+		});
+	}
+});
+
+// 古いiOS向けのコピー代替処理（念のため）
+function fallbackCopy(text) {
+	var textArea = document.createElement("textarea");
+	textArea.value = text;
+	textArea.style.position = "fixed"; // 画面外に隠す
+	document.body.appendChild(textArea);
+	textArea.select();
+	try {
+		document.execCommand('copy');
+		alert("リンクをコピーしました！");
+	} catch (err) {
+		alert("コピーに失敗しました。URLを直接コピーしてください。");
+	}
+	document.body.removeChild(textArea);
+}
+	
 </script>
 
 <div id="editModal" class="modal-overlay">
