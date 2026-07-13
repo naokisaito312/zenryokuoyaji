@@ -1607,22 +1607,32 @@
             background-color: #3A3A3C;
             transform: scale(0.98);
         }
-		/* #qrcode の中に自動生成される画像・キャンバスをiPhoneで絶対に潰さないための設定 */
+		/* #qrcode の枠自体の設定 */
 		#qrcode {
-		    display: block;
-		    width: 180px;  /* QRコードの生成サイズに合わせて調整してください */
-		    height: 180px; /* QRコードの生成サイズに合わせて調整してください */
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
 		    background-color: #FFFFFF;
-		    padding: 8px;
+		    padding: 12px;
 		    border-radius: 8px;
+		    /* 固定サイズを外し、中身のQRコード本来のサイズに合わせる */
+		    width: auto; 
+		    height: auto;
 		}
 		
+		/* 内部の画像とキャンバスのスタイル調整 */
 		#qrcode img, 
 		#qrcode canvas {
-		    width: 100% !important;
-		    height: 100% !important;
-		    display: block !important;
-		    flex-shrink: 0 !important; /* Safariの潰れ対策 */
+		    /* 縦横比を維持して潰れを防ぐ */
+		    max-width: 100% !important;
+		    height: auto !important;
+		    flex-shrink: 0 !important;
+		}
+		
+		/* 【重要】ライブラリ側で非表示（style="display:none"）にされた要素は、そのまま非表示にする */
+		#qrcode img[style*="display: none"],
+		#qrcode canvas[style*="display: none"] {
+		    display: none !important;
 		}
 	</style>
 </head>
