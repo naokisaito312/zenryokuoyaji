@@ -3160,19 +3160,43 @@ function handlegenerateKaikeiQR() {
 
     // 2. 氏名（name）のデータだけを持ったシンプルなオブジェクト配列を作る
     const formattedPlayers = currentPlayers.map(player => {
-        // すでに単なる「文字列の配列」だった場合
+        // 万が一、要素自体がネストされた配列だった場合の対策
+        if (Array.isArray(player)) {
+            player = player[0]; // 最初の要素を取り出す
+        }
+
+        // すでに単なる「文字列」だった場合
         if (typeof player === 'string') {
             return { name: player };
         }
         
-        // オブジェクトだった場合、name 以外の可能性（playerName, text など）も考慮して抽出
+        // オブジェクトだった場合
         if (typeof player === 'object' && player !== null) {
-            const detectedName = player.name || player.playerName || player.text || player.username || '名前なし';
+            // memberListの構造に合わせて、まずは .name を最優先でチェック
+            // さらに入れ子になっている可能性（例: player.member.name など）もカバー
+            const detectedName = 
+                player.name || 
+                (player.member && player.member.name) || 
+                player.playerName || 
+                player.text || 
+                player.username || 
+                '名前なし';
+                
             return { name: detectedName };
         }
         
+        // もし player が数値（uidなど）で渡ってきていた場合のフォールバック
+        if (typeof player === 'number' || typeof player === 'bigint') {
+            // memberList から uid が一致するものを探す
+            const found = memberList.find(m => m.uid === player);
+            if (found) return { name: found.name };
+        }
+        
+        // デバッグ用：何が原因で「不明」になったかをコンソールで追えるようにする
+        console.warn("想定外のデータ型のため「不明」になりました:", player);
         return { name: '不明' };
     });
+
     
 				// 3. 暗号化手順: JSON化 -> モダンなUTF-8エンコード -> Base64変換
 				const jsonStr = JSON.stringify(formattedPlayers);
