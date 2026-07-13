@@ -3184,6 +3184,7 @@ function handlegenerateKaikeiQR() {
     const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
     generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
     
+				setTimeout(() => {
     // 5. すでに表示されているQRコードがあればクリア
     const qrContainer = document.getElementById("qrcode");
     if (qrContainer) {
@@ -3201,6 +3202,7 @@ function handlegenerateKaikeiQR() {
     } else {
         console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
     }
+				}, 100); 
 }
 
 /**
