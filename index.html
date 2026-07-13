@@ -3100,7 +3100,6 @@ let generatedKaikeiUrl = "";
  */
 function handlegenerateKaikeiQR() {
     // 1. 登録済みメンバーの一覧（配列）を取得
-    // ※お使いのコードの変数名（例: memberList, members, registeredMembers など）に合わせて修正してください
     const currentMembers = memberList || []; 
 
     if (currentMembers.length === 0) {
@@ -3108,8 +3107,17 @@ function handlegenerateKaikeiQR() {
         return;
     }
 
-    // 2. メンバー一覧をカンマ区切りの文字列にしてURLエンコード
-    const membersStr = encodeURIComponent(currentMembers.join(','));
+    // ⭐【修正ポイント】オブジェクトの配列から「名前」の文字列だけを抽出する
+    // ※お使いのデータ構造に合わせて .name の部分を .username や .text などに変更してください
+    const memberNames = currentMembers.map(member => {
+        if (typeof member === 'object' && member !== null) {
+            return member.name; // 例: { id: 1, name: "田中" } のような構造の場合
+        }
+        return member; // すでに文字列の場合はそのまま返す
+    });
+
+    // 2. メンバーの名前一覧をカンマ区切りの文字列にしてURLエンコード
+    const membersStr = encodeURIComponent(memberNames.join(','));
     
     // 3. kaikei.html への絶対パスURLを生成
     const currentUrl = window.location.href;
