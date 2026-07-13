@@ -3099,41 +3099,41 @@ let generatedKaikeiUrl = "";
  * 「会計用QRコードを作成」ボタンが押されたときの処理
  */
 function handlegenerateKaikeiQR() {
-    // 1. 登録済みメンバーの一覧（配列）を取得
-    const currentMembers = memberList || []; 
+    // 1. 【修正】登録メンバーではなく、参加プレイヤーの一覧（配列）を取得
+    const currentPlayers = playerList || []; 
 
-    if (currentMembers.length === 0) {
-        alert("登録されている参加者がいません。メンバーを追加してから作成してください。");
+    if (currentPlayers.length === 0) {
+        alert("参加プレイヤーがいません。プレイヤーを追加してから作成してください。");
         return;
     }
 
-    // ⭐【修正のキモ】新しい kaikei.html が求める { name, age } の配列構造に変換する
-    const formattedMembers = currentMembers.map(member => {
-        if (typeof member === 'object' && member !== null) {
+    // 2. 新しい kaikei.html が求める { name, age } の配列構造に変換する
+    const formattedPlayers = currentPlayers.map(player => {
+        if (typeof player === 'object' && player !== null) {
             return {
-                name: member.name || '名前なし',
-                age: member.age || '' // 年齢データがあれば入れる
+                name: player.name || '名前なし',
+                age: player.age || '' // 年齢データがあれば入れる
             };
         }
         // もしすでに文字列（単なる名前の配列）だった場合のフォールバック
-        return { name: member, age: '' };
+        return { name: player, age: '' };
     });
     
-    // ⭐ 新しい暗号化手順: JSON化 -> 特殊文字対策のエンコード -> Base64変換(btoa)
-    const jsonStr = JSON.stringify(formattedMembers);
+    // 3. 新しい暗号化手順: JSON化 -> 特殊文字対策のエンコード -> Base64変換(btoa)
+    const jsonStr = JSON.stringify(formattedPlayers);
     const utf8Str = unescape(encodeURIComponent(jsonStr));
     const base64Data = btoa(utf8Str);
     
-    // 3. kaikei.html への絶対パスURLを生成（パラメータ名を 'data' に変更）
+    // 4. kaikei.html への絶対パスURLを生成（パラメータ名は 'data'）
     const currentUrl = window.location.href;
     const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
     generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
     
-    // 4. すでに表示されているQRコードがあればクリア
+    // 5. すでに表示されているQRコードがあればクリア
     const qrContainer = document.getElementById("qrcode");
     qrContainer.innerHTML = "";
     
-    // 5. QRコードを生成
+    // 6. QRコードを生成
     new QRCode(qrContainer, {
         text: generatedKaikeiUrl,
         width: 160,
