@@ -1138,6 +1138,16 @@
 		    touch-action: manipulation; /* ダブルタップズームを無効化し、クリックを即発火させる */
 		    -webkit-tap-highlight-color: transparent; /* タップ時の青い枠を消す */
 		}
+
+		/* 「集金管理ページを作成」ボタン専用のスタイル */
+		.btn-create-page {
+		    background: var(--accent-color); /* システムブルー */
+		    border: none;
+		    margin-top: 15px; /* 上の要素との余白 */
+		}
+		.btn-create-page:active {
+		    background: #0071e3; /* タップ時に少し暗くするフィードバック */
+		}
 		
 		/* ゴール演出用の固定レイヤー（画面全体を覆う） */
 		.goal-overlay {
@@ -1770,6 +1780,10 @@
 				    <button type="button" class="btn-reset-outline" onclick="initData()">データを初期化</button>
 				</div>
 		    </div>
+	    </div>
+        <div class="settings-group">
+        	<h3 class="settings-title">会計用</h3>
+			<button class="btn-sync btn-create-page" id="btnCreateCollectionPage" onclick="generateKaikeiURL()>集金管理ページを作成</button>
 	    </div>
     </section>
 </div>
@@ -3017,6 +3031,35 @@ function importData(event) {
     reader.readAsText(file);
 }
 
+// --- 会計用ページ ---
+function generateKaikeiURL() {
+    // 1. 既存のアプリから参加者20名の名前（配列）を取得する
+    // ※ ここは既存のコードの変数名（例: participants や players）に合わせて調整してください
+    const memberList = ["山田太郎", "佐藤次郎", "鈴木三郎", "田中四郎"]; 
+
+    if (memberList.length === 0) {
+        alert("参加者が登録されていません。");
+        return;
+    }
+
+    // 2. 配列をカンマ区切りの文字列にして、URL用にエンコード（安全な文字列に変換）する
+    const encodedMembers = encodeURIComponent(memberList.join(','));
+
+    // 3. 会計ページのURLを生成（同じGithub Pages内の kaikei.html を指す）
+    const currentUrl = window.location.href;
+    const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+    const kaikeiUrl = `${baseUrl}/kaikei.html?members=${encodedMembers}`;
+
+    // 4. 生成したURLをクリップボードにコピー
+    navigator.clipboard.writeText(kaikeiUrl).then(() => {
+        alert("集金管理ページのURLをコピーしました！会計担当者に共有してください。\n\n" + kaikeiUrl);
+    }).catch(err => {
+        console.error("コピーに失敗しました: ", err);
+        // コピーに失敗した場合は画面にURLを表示して手動コピーしてもらう
+        prompt("以下のURLをコピーして共有してください：", kaikeiUrl);
+    });
+}
+	
 // --- ナビゲーション・ドラッグ＆スナップ処理 ---
 const nav = document.getElementById('bottomNav');
 const indicator = document.getElementById('navIndicator');
