@@ -3257,8 +3257,7 @@ function copyKaikeiLink() {
     navigator.clipboard.writeText(generatedKaikeiUrl).then(() => {
         alert("会計ページのURLをクリップボードにコピーしました！");
     }).catch(err => {
-        console.error('コピーに失敗しました: ', err);
-        alert("コピーに失敗しました。お手数ですがURLを手動でコピーしてください。");
+        alert("コピーに失敗しました。");
     });
 }
 
@@ -3275,18 +3274,7 @@ document.getElementById('btnCreateQr').addEventListener('click', function() {
         const qrWrapper = document.getElementById('qrCodeWrapper');
         if (qrWrapper) qrWrapper.style.display = 'flex';
 
-        // 3. コピーボタンの制御
-        const copyBtn = document.getElementById('btnCopyLink');
-        if (copyBtn) {
-            copyBtn.style.display = 'block';
-            copyBtn.onclick = function() {
-                navigator.clipboard.writeText(generatedKaikeiUrl).then(() => {
-                    alert('会計用リンクをコピーしました。');
-                }).catch(err => {
-                    console.error('コピー失敗', err);
-                });
-            };
-        }
+       
     }
 });
 
