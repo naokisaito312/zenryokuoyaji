@@ -40,14 +40,14 @@
 			
             color: var(--text-main);
             margin: 0;
-		        padding: 0;
-		        width: 100%;
-			      min-height: 100dvh; 
+		    padding: 0;
+		    width: 100%;
+			min-height: 100dvh; 
 
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             touch-action: pan-y; 
-			      overscroll-behavior-x: none;
+			overscroll-behavior-x: none;
             background-color: transparent;
         }
 
@@ -135,29 +135,30 @@
 		    top: 0;
 		    left: 0;
 		    width: 100%;
-		    padding-top: calc(env(safe-area-inset-top));
-			  margin: 0 !important;
+		    margin: 0 !important;
 		    z-index: 100;
 		    
-		    /* 1. 背景色も少しグラデーションさせると、より自然に消えていきます */
+		    /* 💡【重要】グラデーションの基準となる全体の高さを、ブラウザ/PWA問わず「110px」に完全固定 */
+		    height: calc(110px + max(env(safe-area-inset-top), 47px));
+		    
+		    /* 1. 背景色も少しグラデーションさせると、より自然に消えてしていきます */
 		    background: linear-gradient(
 		        to bottom, 
 		        rgba(0, 0, 0, 0.4) 0%, 
 		        rgba(0, 0, 0, 0.1) 80%, 
 		        transparent 100%
 		    );
-
+		
 		    /* 2. 基本のぼかし設定 */
 		    backdrop-filter: blur(15px);
 		    -webkit-backdrop-filter: blur(15px);
-
+		
 		    /* 3. 【重要】ぼかし自体をグラデーションで切り取る設定 */
-		    /* 上から下へ向かって、見える（ぼかす）範囲を0から100%で指定します */
 		    -webkit-mask-image: linear-gradient(
 		        to bottom, 
-		        black 0%,      /* 上端は100%ぼかす */
-		        black 60%,     /* 中間まではしっかりぼかす */
-		        transparent 100% /* 下端に向けてぼかしを消していく */
+		        black 0%, 
+		        black 60%, 
+		        transparent 100%
 		    );
 		    mask-image: linear-gradient(
 		        to bottom, 
@@ -165,39 +166,29 @@
 		        black 60%, 
 		        transparent 100%
 		    );
-
-		    /* iPhoneのノッチ対策 */
-		    padding-top: env(safe-area-inset-top);
 		}
-
+		
 		h2 {
-		    /* 固定配置 */
-		    position: -webkit-sticky; /* Safari対応 */
-		    position: sticky;
-		    top: 0;
-		    z-index: 100; /* コンテンツより前面に */
-		    align-items: center;
+		    /* 💡ヘッダー自体が固定されているので、stickyではなく絶対配置で位置を完全に同期させる */
+		    position: absolute;
+		    /* 💡前のステップで解説したmax()を使い、上端の文字開始位置をブラウザ/PWAで完全に一致させる */
+		    top: calc(15px + max(env(safe-area-inset-top), 47px));
+		    left: 0;
 		    
 		    /* レイアウト調整 */
 		    width: 100%;
 		    margin: 0 !important;
-		    padding:10px 0 calc(32px + env(safe-area-inset-top)) 0; /* 上下の余白（下はグラデーションにかかる分広め） */
+		    padding: 0; /* paddingでの無理な高さ稼ぎをやめ、位置はtopで制御 */
 		    font-size: 1.2rem;
 		    font-weight: 700;
 		    letter-spacing: 0.05em;
 		    color: #FFFFFF;
 		    text-align: center;
-
-			background: transparent !important;
+		    background: transparent !important;
 		    
-		    /* text-shadow: 左右のズレ 上下のズレ ぼかし具合 色;
-		       複数の影を重ねることで、ネオンのような発光感や高い視認性を出せます
-		    */
 		    text-shadow: 
 		        2px 2px 4px rgba(0, 0, 0, 0.8),   /* 基本の影 */
 		        0px 0px 10px rgba(0, 0, 0, 0.5); /* 全体的な縁取り効果 */
-		    
-		    letter-spacing: 0.05em; /* 文字間隔を少し広げるとより高級感が出ます */
 		}
 
 		/* ナビゲーション全体の親要素 */
