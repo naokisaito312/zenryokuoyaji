@@ -3099,7 +3099,7 @@ let generatedKaikeiUrl = "";
  * 「会計用QRコードを作成」ボタンが押されたときの処理
  */
 function handlegenerateKaikeiQR() {
-    // 1. 【修正】登録メンバーではなく、参加プレイヤーの一覧（配列）を取得
+    // 1. 参加プレイヤーの一覧（配列）を取得
     const currentPlayers = playerList || []; 
 
     if (currentPlayers.length === 0) {
@@ -3107,19 +3107,23 @@ function handlegenerateKaikeiQR() {
         return;
     }
 
-    // 2. 新しい kaikei.html が求める { name, age } の配列構造に変換する
+    // 2. 氏名（name）のデータだけを持ったシンプルなオブジェクト配列を作る
     const formattedPlayers = currentPlayers.map(player => {
-        if (typeof player === 'object' && player !== null) {
-            return {
-                name: player.name || '名前なし',
-                age: player.age || '' // 年齢データがあれば入れる
-            };
+        // すでに単なる「文字列の配列」だった場合
+        if (typeof player === 'string') {
+            return { name: player };
         }
-        // もしすでに文字列（単なる名前の配列）だった場合のフォールバック
-        return { name: player, age: '' };
+        
+        // オブジェクトだった場合、name 以外の可能性（playerName, text など）も考慮して抽出
+        if (typeof player === 'object' && player !== null) {
+            const detectedName = player.name || player.playerName || player.text || player.username || '名前なし';
+            return { name: detectedName };
+        }
+        
+        return { name: '不明' };
     });
     
-    // 3. 新しい暗号化手順: JSON化 -> 特殊文字対策のエンコード -> Base64変換(btoa)
+    // 3. 暗号化手順: JSON化 -> 特殊文字対策のエンコード -> Base64変換(btoa)
     const jsonStr = JSON.stringify(formattedPlayers);
     const utf8Str = unescape(encodeURIComponent(jsonStr));
     const base64Data = btoa(utf8Str);
@@ -3131,17 +3135,21 @@ function handlegenerateKaikeiQR() {
     
     // 5. すでに表示されているQRコードがあればクリア
     const qrContainer = document.getElementById("qrcode");
-    qrContainer.innerHTML = "";
-    
-    // 6. QRコードを生成
-    new QRCode(qrContainer, {
-        text: generatedKaikeiUrl,
-        width: 160,
-        height: 160,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        
+        // 6. QRコードを生成
+        new QRCode(qrContainer, {
+            text: generatedKaikeiUrl,
+            width: 160,
+            height: 160,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    } else {
+        console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
+    }
 }
 
 /**
