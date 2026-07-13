@@ -111,11 +111,12 @@
         }
 		
 		.page::after {
-		    content: " ";
+			content: " ";
 		    display: block;
-		    height: calc(100px + env(safe-area-inset-bottom));
+		    /* 背景色を透明にし、高さをセーフエリア + ナビゲーションの高さ以上に調整 */
+		    height: calc(120px + env(safe-area-inset-bottom));
 		    flex-shrink: 0;
-			background: red;
+		    background: transparent !important; /* redから変更 */
 		}
 		
         @keyframes pageIn {
@@ -627,7 +628,7 @@
 		    gap: 4px; /* ボタン同士の間隔 */
 		    margin-left: auto;
 		    margin-right: 10px;
-		    width: 100%;
+		    width: auto;
 		}
 
 		/* セレクトボックス自体のサイズ調整 */
@@ -643,6 +644,9 @@
 		    text-align: left;
 		    font-size: 16px;
 		    font-weight: 600;
+
+			-webkit-appearance: none;
+    		appearance: none;
 		}
 
 		/* コンテンツの開始位置がタイトルと被らないように調整 */
@@ -1551,20 +1555,22 @@
 		}
 
 		/* --- 会計共有用QRコードエリアのスタイル --- */
-        .qr-container {
-            background-color: #1C1C1E;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 14px;
-			
-			/* iPhoneでの表示不具合を防ぐための修正 */
+		.qr-container {
+		    background-color: #1C1C1E;
+		    border-radius: 12px;
+		    padding: 16px;
+		    display: flex;
+		    flex-direction: column;
+		    align-items: center;
+		    gap: 14px;
+		    
+		    /* iOSでの配置ズレや描画バグを防ぐお守り */
 		    position: relative; 
 		    z-index: 10;
-		    transform: translate3d(0, 0, 0); /* 強制的に手前に描画させるお守り */
-        }
+		    transform: translate3d(0, 0, 0);
+		    width: 100%; /* 横幅を明示 */
+		    box-sizing: border-box;
+		}
         .qr-instruction {
             font-size: 13px;
             color: #8E8E93;
@@ -1615,17 +1621,18 @@
 		    background-color: #FFFFFF;
 		    padding: 12px;
 		    border-radius: 8px;
-		    /* 固定サイズを外し、中身のQRコード本来のサイズに合わせる */
-		    width: auto; 
-		    height: auto;
+		    width: 184px; /* 160px + padding分でサイズを固定 */
+		    height: 184px; 
+		    box-sizing: border-box;
 		}
 		
 		/* 内部の画像とキャンバスのスタイル調整 */
 		#qrcode img, 
 		#qrcode canvas {
-		    /* 縦横比を維持して潰れを防ぐ */
 		    max-width: 100% !important;
+		    max-height: 100% !important;
 		    height: auto !important;
+		    width: auto !important;
 		    flex-shrink: 0 !important;
 		}
 		
