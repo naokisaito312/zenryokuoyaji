@@ -1835,12 +1835,12 @@
         <div class="settings-group">
         	<h3 class="settings-title">会計用</h3>
 			<div class="settings-card">
-		        <button type="button" class="btn-sync btn-create-page" style="align-items: center; gap: 4px;" id="btnCreateQr" onclick="handlegenerateKaikeiQR()" >会計用QRコードを作成</button>
-		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="display: none; align-items: center; gap: 4px;">
+		        <button type="button" class="btn-sync btn-create-page" style="flex-direction: column; align-items: center; gap: 4px;" id="btnCreateQr" onclick="handlegenerateKaikeiQR()" >会計用QRコードを作成</button>
+		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="flex-direction: column; display: none; align-items: center; gap: 4px;">
 		            <!-- ここにQRコードが生成されます -->
 		            <div id="qrcode"></div>
 		        </div>
-		        <button type="button" class="copy-link-btn" id="btnCopyLink" style="display: none; align-items: center; gap: 4px;">
+		        <button type="button" class="copy-link-btn" id="btnCopyLink" style="flex-direction: column; display: none; align-items: center; gap: 4px;">
 		            リンクをコピー
 		        </button>
 			</div>
