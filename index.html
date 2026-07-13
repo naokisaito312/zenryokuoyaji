@@ -48,16 +48,20 @@
             overflow-x: hidden;
             touch-action: pan-y; 
 			overscroll-behavior-x: none;
+			overscroll-behavior: none;
             background-color: transparent;
         }
 
 		/* フォーカス時に余計な余白を作らない */
 		html, body {
 			top: 0;
-			padding: 0 !important;
-    		margin: 0 !important;
-		    min-height: 100dvh;
-		    overflow-x: hidden; /* 横ズレを物理的に禁止 */
+		    padding: 0 !important;
+		    margin: 0 !important;
+		    width: 100%;
+		    min-height: 100dvh; /* dvhに統一 */
+		    height: 100dvh;     /* 高さをデバイス表示領域に固定 */
+		    overflow: hidden;   /* 画面全体のスクロール（ガタツキ）を完全に禁止 */
+		    background-color: #000000;
 		}
 
 		.fixed-bg {
@@ -88,7 +92,7 @@
 		    position: relative; /* 子要素の基準にする */
 		    width: 100vw;
 		    max-width: 540px;
-		    height: 100vh;      /* 画面いっぱいに広げる */
+		    height: 100dvh;      /* 画面いっぱいに広げる */
 		    overflow: hidden;
 		    display: flex;
 		    justify-content: center;
@@ -109,18 +113,16 @@
 		    box-sizing: border-box;
 		    text-align: center;
 		    
-		    /* ⭕ 絶対配置を復活させ、画面全体に広げる */
 		    position: absolute;
 		    top: 0;
 		    left: 0;
 		    right: 0;
 		    bottom: 0;
 		    
-		    /* ⭕ ここでヘッダー分（76px）とノッチ分の余白を確実に確保する */
 		    padding-top: calc(76px + env(safe-area-inset-top));
 		    padding-left: 16px;
 		    padding-right: 16px;
-		    padding-bottom: 24px;
+		    padding-bottom: calc(80px + env(safe-area-inset-bottom));
 		    
 		    overflow-y: auto; /* コンテンツが長い場合はページ内でスクロール */
 		}
@@ -177,7 +179,7 @@
 		h2 {
 		    position: absolute;
 		    /* 通常ブラウザ時：上端から16pxの綺麗な位置に固定 */
-		    top: 16px;
+		    top: calc(16px + env(safe-area-inset-top));
 		    left: 0;
 		    width: 100%;
 		    margin: 0 !important;
@@ -193,19 +195,23 @@
 		        0px 0px 10px rgba(0, 0, 0, 0.5);
 		}
 		
-		
 		/* ==========================================================
-		   2. PWA（ホーム画面から起動）された時だけのスタイル上書き
+		   PWA（ホーム画面から起動）された時だけのスタイル上書き
 		   ========================================================== */
 		@media (display-mode: standalone) {
 		    header {
-		        /* PWA全画面時：ベースの64pxに、iPhone固有のセーフエリア（約47px）を動的にプラス */
-		        height: calc(64px + env(safe-area-inset-top));
+		        /* PWA全画面時：高さを少し高めにとり、グラデーションの範囲をノッチ下に広げる */
+		        height: calc(84px + env(safe-area-inset-top));
 		    }
 		    
 		    h2 {
-		        /* PWA全画面時：文字の開始位置をセーフエリア（ノッチ）の真下に動的スライド */
-		        top: calc(16px + env(safe-area-inset-top));
+		        /* ノッチの直下に綺麗に収まるようにタイトルの位置をさらに微調整 */
+		        top: calc(24px + env(safe-area-inset-top));
+		    }
+		
+		    .page {
+		        /* PWA時はヘッダーが縦に伸びるため、中のコンテンツの開始位置をさらに下げる */
+		        padding-top: calc(96px + env(safe-area-inset-top));
 		    }
 		}
 
