@@ -153,7 +153,7 @@
 		    z-index: 100;
 		    
 		    /* 通常ブラウザ時：グラデーションと文字の合計高さを「64px」にカチッと固定 */
-		    height: 64px;
+		    height: 60px;
 		    
 		    background: linear-gradient(
 		        to bottom, 
@@ -193,13 +193,13 @@
 		   ========================================================== */
 		@media (display-mode: standalone) {
 		    header {
-		        /* PWA全画面時：ベースの64pxに、iPhone固有のセーフエリア（約47px）を動的にプラス */
-		        height: calc(64px + env(safe-area-inset-top));
+		        /* PWA全画面時：ベースの60pxに、iPhone固有のセーフエリア（約47px）を動的にプラス */
+		        height: calc(60px + env(safe-area-inset-top));
 		    }
 		    
 		    h2 {
 		        /* PWA全画面時：文字の開始位置をセーフエリア（ノッチ）の真下に動的スライド */
-		        top: calc(16px + env(safe-area-inset-top));
+		        top: calc(env(safe-area-inset-top));
 		    }
 		}
 
