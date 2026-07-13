@@ -112,11 +112,23 @@
     // 1. URLパラメータからデータを抽出してデコード
     function getParams() {
         const urlParams = new URLSearchParams(window.location.search);
-        const dataParam = urlParams.get('data');
-        if (!dataParam) return null;
+        const base64Data = urlParams.get('data');
+        if (!base64Data) return null;
         try {
-            const decodedJson = decodeURIComponent(atob(dataParam));
-            return JSON.parse(decodedJson);
+            // Base64をバイナリ（Uint8Array）に戻す
+            const binaryStr = atob(decodeURIComponent(base64Data));
+            const len = binaryStr.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryStr.charCodeAt(i);
+            }
+    
+            // UTF-8としてデコード
+            const decoder = new TextDecoder('utf-8');
+            const jsonStr = decoder.decode(bytes);
+    
+            // JSONパースして元のオブジェクトに戻す
+            return JSON.parse(jsonStr);
         } catch (e) {
             console.error("データデコードエラー:", e);
             return null;
