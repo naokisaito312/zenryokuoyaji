@@ -3174,15 +3174,23 @@ function handlegenerateKaikeiQR() {
         return { name: '不明' };
     });
     
-    // 3. 暗号化手順: JSON化 -> 特殊文字対策のエンコード -> Base64変換(btoa)
-    const jsonStr = JSON.stringify(formattedPlayers);
-    const utf8Str = unescape(encodeURIComponent(jsonStr));
-    const base64Data = btoa(utf8Str);
-    
-    // 4. kaikei.html への絶対パスURLを生成（パラメータ名は 'data'）
-    const currentUrl = window.location.href;
-    const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-    generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
+    // 3. 暗号化手順: JSON化 -> モダンなUTF-8エンコード -> Base64変換
+const jsonStr = JSON.stringify(formattedPlayers);
+
+/* --- 古いコード（削除） --- */
+// const utf8Str = unescape(encodeURIComponent(jsonStr));
+// const base64Data = btoa(utf8Str);
+
+/* --- 新しいコード（Safari対応） --- */
+const encoder = new TextEncoder();
+const uint8Array = encoder.encode(jsonStr);
+// Uint8Arrayを安全にBase64に変換
+const base64Data = btoa(String.fromCharCode(...uint8Array));
+
+// 4. kaikei.html への絶対パスURLを生成（パラメータ名は 'data'）
+const currentUrl = window.location.href;
+const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${encodeURIComponent(base64Data)}`; // URLパラメータ用に一応エンコード
     
 				setTimeout(() => {
     // 5. すでに表示されているQRコードがあればクリア
