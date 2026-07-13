@@ -1624,6 +1624,12 @@
 		    width: 184px; /* 160px + padding分でサイズを固定 */
 		    height: 184px; 
 		    box-sizing: border-box;
+						
+						/* --- iOS Safariの描画バグ対策を追加 --- */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 		}
 		
 		/* 内部の画像とキャンバスのスタイル調整 */
