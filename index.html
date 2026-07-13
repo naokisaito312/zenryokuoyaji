@@ -1842,8 +1842,9 @@
 		            <!-- ここにQRコードが生成されます -->
 		            <div id="qrcode"></div>
 		        </div>
-		        <button type="button" class="setting-item" id="btnCopyLink" style="flex-direction: column; display: none; align-items: center; gap: 4px;">
-		            リンクをコピー
+		        <button id="btnCopyLink" class="setting-item"  style="flex-direction: column; display: none; align-items: center; gap: 4px; border-bottom: none;">
+					<button onclick="copyKaikeiLink()" class="btn-sync">リンクをコピー</button>
+		            
 		        </button>
 			</div>
 	    </div>
