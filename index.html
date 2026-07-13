@@ -40,14 +40,15 @@
 			
             color: var(--text-main);
             margin: 0;
-		    padding: 0;
-		    width: 100%;
-			min-height: 100dvh; 
+		        padding: 0;
+		        width: 100%;
+			      min-height: 100dvh; 
 
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             touch-action: pan-y; 
-			overscroll-behavior-x: none;
+			      overscroll-behavior-x: none;
+            background-color: transparent;
         }
 
 		/* フォーカス時に余計な余白を作らない */
@@ -67,7 +68,7 @@
 		    /* 【変更】100% や 100dvh から「100vmax」に変更します。
 		       これにより、Safariのナビゲーションバーがどんな状態であっても、
 		       物理的な画面の最大サイズまで背景を強制的に引き伸ばして裏側に回り込ませます */
-		    height: 100dvh;
+		    height: 120%;
 		    
 		    background-image:
 		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 20%),
