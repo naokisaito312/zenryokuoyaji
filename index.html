@@ -282,13 +282,16 @@
 		.nav-layer {
 		    position: absolute;
 		    top: 0;
-		    /* 左右に 8px の内側余白（パディング）を設けて、アイコンたちが端に寄りすぎないようにします */
-		    left: 8px; 
-		    width: calc(100% - 16px);
+		    left: 0; 
+		    width: 100%;
 		    height: 100%;
 		    display: flex;
 		    justify-content: space-around;
 		    align-items: center;
+		    
+		    /* 【★追加】レイヤーの横幅は100%のまま、内側に 8px の余白を作ります */
+		    padding: 0 8px; 
+		    box-sizing: border-box;
 		}
 		
 		/* --- 3. 背面レイヤー --- */
@@ -310,7 +313,7 @@
 		    transition: clip-path 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 		}
 		.nav-active .nav-icon-blue {
-		    filter: brightness(0) saturate(100%) invert(53%) sepia(93%) saturate(1711%) hue-rotate(178deg) brightness(102%) contrast(105%);
+		    filter: brightness(0) saturate(100%) invert(41%) sepia(87%) saturate(3031%) hue-rotate(188deg) brightness(99%) contrast(102%);
 		}
 		.nav-active .nav-item {
 		    color: rgba(255, 255, 255, 1.0); 
