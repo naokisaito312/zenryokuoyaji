@@ -120,7 +120,7 @@
 		    padding-top: calc(72px + env(safe-area-inset-top));
 		    padding-left: 0px;
 		    padding-right: 0px;
-		    padding-bottom: 0px;
+		    padding-bottom: calc(84px + env(safe-area-inset-bottom));
 		    
 		    overflow-y: auto; 
 		    background: transparent !important; /* 確実に背景を透過 */
@@ -136,11 +136,7 @@
 		}
 		
 		.page::after {
-			content: " ";
-		    display: block;
-		    height: calc(84px + env(safe-area-inset-bottom));
-		    flex-shrink: 0;
-		    background: transparent !important; 
+			display: none !important; /* バグの原因になるため無効化 */
 		}
 		
         @keyframes pageIn {
@@ -217,6 +213,7 @@
     		}
 		    .page {
 		        padding-top: calc(96px + env(safe-area-inset-top));
+				padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
 		    }
 		}
 
