@@ -56,19 +56,20 @@
 
 		/* 💡 iOSの描画バグによる隙間（黒帯）を物理的に塞ぐ背景レイヤー */
 		.pwa-bg-cover {
-			position: fixed;
-		    /* inset: -20px に広げ、iOSの計算ズレ（数画素の隙間）を完全にカバー */
+		    position: fixed;
 		    inset: -20px !important; 
 		    z-index: -9999 !important; /* 確実に最背面にする */
 		    
+		    /* 1. ベースの背景色を黒に設定 */
 		    background-color: #000000 !important;
+		    
+		    /* 2. 赤と緑のグラデーション（少し明るさを上げて範囲を広げました） */
 		    background-image:
-		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 25%),
-		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 25%) !important;
+		        radial-gradient(circle at 0% 0%, rgba(0, 120, 40, 0.6) 0%, transparent 70%),
+		        radial-gradient(circle at 100% 0%, rgba(150, 0, 0, 0.6) 0%, transparent 70%) !important;
 		    background-attachment: fixed !important;
 		    
 		    pointer-events: none; 
-		    /* iOSの描画の乱れを防ぐハードウェアアクセラレーション */
 		    transform: translate3d(0,0,0);
 		}
 		.fixed-bg {
