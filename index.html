@@ -54,38 +54,36 @@
 
 		/* フォーカス時に余計な余白を作らない */
 		html, body {
-			top: 0;
-		    padding: 0 !important;
 		    margin: 0 !important;
+		    padding: 0 !important;
 		    width: 100%;
-		    min-height: 100dvh; /* dvhに統一 */
-		    height: 100dvh;     /* 高さをデバイス表示領域に固定 */
-		    overflow: hidden;   /* 画面全体のスクロール（ガタツキ）を完全に禁止 */
-		    background-color: transparent;
+		    height: 100%;       /* dvhから100%に変更して端末物理画面に固定 */
+		    min-height: 100%;
+		    overflow: hidden;   
+		    background-color: transparent !important; /* 通常ブラウザ時は透明にして背景を透かす */
+		    -webkit-font-smoothing: antialiased;
+		    touch-action: pan-y; 
+		    overscroll-behavior-x: none;
+		    overscroll-behavior: none;
 		}
 
 		.fixed-bg {
 		    position: fixed;
 		    top: 0;
 		    left: 0;
-		    width: 100%;
-		    /* 【変更】100% や 100dvh から「100vmax」に変更します。
-		       これにより、Safariのナビゲーションバーがどんな状態であっても、
-		       物理的な画面の最大サイズまで背景を強制的に引き伸ばして裏側に回り込ませます */
-		    height: 100%;
-
-    		background-color: #000000; 
+		    right: 0;
+		    bottom: 0;
+		    width: 100vw;
+		    height: 100vh;
+		    background-color: #000000; 
 		    background-image:
 		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 20%),
 		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 20%);
 		    background-size: cover;
-		    z-index: -1;
+		    z-index: -2; /* レイヤーを最背面に */
 		    pointer-events: none;
-		    
-		    /* 【追加】位置の計算をブラウザの表示領域ではなく「デバイスの画面全体」に固定するお守り */
 		    transform: translate3d(0, 0, 0);
 		}
-		
 		
         /* --- ページレイアウト（センタリング） --- */
 		/* 通常のブラウザ時のメインエリアの余白 */
@@ -161,25 +159,25 @@
 		    margin: 0 !important;
 		    z-index: 100;
 		    
-		    /* 通常ブラウザ時：グラデーションと文字の合計高さを「64px」にカチッと固定 */
+		    /* 高さをセーフエリアと連動させ、グラデーションを薄く透過に変更 */
 		    height: calc(64px + env(safe-area-inset-top));
+		    padding-top: env(safe-area-inset-top);
 		    
 		    background: linear-gradient(
 		        to bottom, 
-		        rgba(0, 0, 0, 0.4) 0%, 
-		        rgba(0, 0, 0, 0.1) 80%, 
+		        rgba(0, 0, 0, 0.6) 0%, 
+		        rgba(0, 0, 0, 0.2) 60%, 
 		        transparent 100%
 		    );
 		    backdrop-filter: blur(15px);
 		    -webkit-backdrop-filter: blur(15px);
 		
-		    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
-		    mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+		    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+		    mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
 		}
 		
 		h2 {
 		    position: absolute;
-		    /* 通常ブラウザ時：上端から16pxの綺麗な位置に固定 */
 		    top: calc(16px + env(safe-area-inset-top));
 		    left: 0;
 		    width: 100%;
@@ -200,18 +198,20 @@
 		   PWA（ホーム画面から起動）された時だけのスタイル上書き
 		   ========================================================== */
 		@media (display-mode: standalone) {
+		    html, body {
+		        background-color: #000000 !important; /* PWA特有の透明バグを防ぐため黒を強制 */
+		    }
+		    .fixed-bg {
+		        z-index: -1; /* 背景レイヤーの位置をPWA環境用に再確定 */
+		        display: block !important;
+		    }
 		    header {
-		        /* PWA全画面時：高さを少し高めにとり、グラデーションの範囲をノッチ下に広げる */
 		        height: calc(84px + env(safe-area-inset-top));
 		    }
-		    
 		    h2 {
-		        /* ノッチの直下に綺麗に収まるようにタイトルの位置をさらに微調整 */
 		        top: calc(24px + env(safe-area-inset-top));
 		    }
-		
 		    .page {
-		        /* PWA時はヘッダーが縦に伸びるため、中のコンテンツの開始位置をさらに下げる */
 		        padding-top: calc(96px + env(safe-area-inset-top));
 		    }
 		}
@@ -220,67 +220,59 @@
 		#bottomNav {
 		    display: flex;
 		    position: fixed;
-		    bottom: calc(env(safe-area-inset-bottom));
+		    bottom: calc(12px + env(safe-area-inset-bottom));
 		    left: 50%;
 		    transform: translateX(-50%);
 		    width: 94%;
 		    max-width: 550px;
-		    background: transparent;
-		    backdrop-filter: blur(4px);
-		    -webkit-backdrop-filter: blur(4px);
-		    border-radius: 30px; /* ナビ全体の角丸 */
-		    border: 0.5px outset rgba(255, 255, 255, 0.4);
-		    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+		    background: rgba(28, 28, 30, 0.6); /* 不透明だったのを0.6透過に変更 */
+		    backdrop-filter: blur(20px);
+		    -webkit-backdrop-filter: blur(20px);
+		    border-radius: 30px; 
+		    border: 0.5px outset rgba(255, 255, 255, 0.2);
+		    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 		    height: 60px;
 		    z-index: 1000;
-		    padding: 0 6px; /* 左右に少し遊びを作る */
+		    padding: 0 6px; 
 		    box-sizing: border-box;
 		    align-items: center;
 		}
 		
-		/* 枠線専用のレイヤー */
 		#bottomNav::before {
 		    content: "";
 		    position: absolute;
-		    inset: 0; /* 上下左右0の位置に配置 */
+		    inset: 0; 
 		    border-radius: 30px; 
-		    padding: 1.0px; /* ここが枠線の太さになる */
-		    
-		    background: rgba(255, 255, 255, 1.0);
-		    
-		    /* マスク処理：自分の内側だけを削り取る */
+		    padding: 1.0px; 
+		    background: rgba(255, 255, 255, 0.2); /* 境界線を少し抑えめに */
 		    -webkit-mask: 
 		        linear-gradient(rgba(255, 255, 255, 0.25) 0 0) content-box, 
 		        linear-gradient(#fff 0 0);
 		    -webkit-mask-composite: xor;
 		    mask-composite: exclude;
-		    
-		    pointer-events: none; /* 枠がボタン操作を邪魔しないようにする */
-		    z-index: -1; /* コンテンツの裏側に配置 */
+		    pointer-events: none; 
+		    z-index: -1; 
 		}
-
-		/* インジケーターを角丸の内側に収める */
+		
 		#navIndicator {
-			position: absolute;
+		    position: absolute;
 		    width: calc((100% - 12px) / 6); 
 		    height: 48px;
-
 		    border-radius: 24px;
 		    top: 6px; 
 		    left: 6px;
 		    z-index: 1;
-		    
-			transform: translateX(var(--gyro-x, 0px)) scale(var(--sx, 1), var(--sy, 1));
-		    
-		    /* 液体感を出すため、形（transform）の変化を 
-		       位置（left）よりも少しだけ速く終わらせるのがコツです
-		    */
+		    transform: translateX(var(--gyro-x, 0px)) scale(var(--sx, 1), var(--sy, 1));
 		    transition: 
 		        left 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
 		        width 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
 		        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-
-		    background: rgba(0, 0, 0, 0.18);
+		    background: rgba(255, 255, 255, 0.15); /* インジケーターの透け感を調整 */
+		}
+		
+		/* 非アクティブ時の文字色を透過背景に馴染むように調整 */
+		.nav-item:not(.active) {
+		    color: rgba(255, 255, 255, 0.6); 
 		}
 
 		.nav-item {
@@ -299,11 +291,6 @@
 		    z-index: 1002; /* 文字をインジケーターより手前に */
 		    -webkit-tap-highlight-color: transparent;
 		    filter: brightness(0);
-		}
-
-		/* 非アクティブ時の文字色を少し落とす */
-		.nav-item:not(.active) {
-		    color: rgba(255, 255, 255, 1.0);
 		}
 
 		.nav-item.active {
