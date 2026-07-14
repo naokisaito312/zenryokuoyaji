@@ -2239,18 +2239,15 @@ function showPage(index) {
 
     // 2. ナビゲーションの見た目・インジケーターとクリップ領域の更新
     if (indicator && targetElement) {
-		// 基準要素の本来の左端位置と幅を取得
-	    const rawLeft = targetElement.offsetLeft;
-	    const rawWidth = targetElement.offsetWidth;
-	
-	    /* ====================================================
-	       【修正】インジケーターがアイコンの中心にピッタリ合うように計算
-	       ==================================================== */
-	    // アイコンの実際の幅（CSSで指定している26px）
-	    const iconWidth = 26; 
+		const iconElement = targetElement.querySelector('.icon') || targetElement;
+
+	    // アイコン自体の左端位置と、実際の幅を取得
+	    const iconLeft = iconElement.offsetLeft;
+	    const iconWidth = iconElement.offsetWidth; // これでCSSの26px（または実寸）が正確に取れます
 	    
-	    // 基準エリア（1ブロック）の中心点を割り出す
-	    const targetCenter = rawLeft + (rawWidth / 2);
+	    // アイコンの「完全な中心点」を割り出す
+	    // （targetElementのパディング等に影響されなくなります）
+	    const targetCenter = iconLeft + (iconWidth / 2);
 	    
 	    // インジケーター自体の横幅（アイコンより一回り大きいサイズ。お好みの幅に調整可）
 	    const indicatorWidth = 60; 
