@@ -60,13 +60,10 @@
 		    inset: -20px !important; 
 		    z-index: -9999 !important; /* 確実に最背面にする */
 		    
-		    /* 1. ベースの背景色を黒に設定 */
-		    background-color: #000000 !important;
-		    
-		    /* 2. 赤と緑のグラデーション（少し明るさを上げて範囲を広げました） */
-		    background-image:
-		        radial-gradient(circle at 0% 0%, rgba(0, 120, 40, 0.6) 0%, transparent 70%),
-		        radial-gradient(circle at 100% 0%, rgba(150, 0, 0, 0.6) 0%, transparent 70%) !important;
+			background: 
+			        radial-gradient(circle at 0% 0%, rgba(0, 150, 50, 0.8) 0%, transparent 70%),
+			        radial-gradient(circle at 100% 0%, rgba(180, 0, 0, 0.8) 0%, transparent 70%),
+			        #000000 !important; /* 一番最後にベースの黒を書く */
 		    background-attachment: fixed !important;
 		    
 		    pointer-events: none; 
