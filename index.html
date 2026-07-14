@@ -307,7 +307,7 @@
 		    /* インジケーターの移動アニメーション（0.7s）と完全に同期させる */
 		    transition: clip-path 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 		}
-		.nav-active .nav-icon {
+		.nav-active .nav-icon-blue {
 		    /* 重なった時のアイコン色（鮮やかなiOS風の青 #007aff） */
 		    filter: invert(38%) sepia(94%) saturate(2035%) hue-rotate(202deg) brightness(101%) contrast(106%);
 		}
@@ -349,7 +349,7 @@
 		    margin-bottom: 2px;
 		}
 
-		.nav-icon {
+		.nav-icon, .nav-icon-blue {
 			width: 26px;   /* 好みに応じて24px〜28px程度で微調整してください */
 			height: 26px;
 			object-fit: contain;
