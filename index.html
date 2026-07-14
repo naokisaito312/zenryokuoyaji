@@ -1241,6 +1241,38 @@
 		        transform: translateY(-50%) translateX(15%) scaleX(-1);
 		    }
 		}
+
+		/* アナウンサー画像の配置と初期状態 */
+		.announcer-illustration {
+		    position: absolute;
+		    /* 画面の中央少し下に配置 */
+		    bottom: 15%; /* 下からの位置（％はお好みで調整してください） */
+		    left: 50%;
+		    transform: translateX(-50%) scale(0.8); /* 中央寄せにしつつ、初期状態は少し小さく */
+		    
+		    max-width: 200px; /* 画像の最大横幅（画面に合わせて調整してください） */
+		    height: auto;
+		    opacity: 0; /* 最初は透明 */
+		    pointer-events: none; /* クリックなどの邪魔をしないように */
+		    
+		    /* アニメーションの指定（0.5秒かけて、じわっと動かす） */
+		    animation: zoomFadeIn 0.5s ease-out forwards;
+		    /* 必要に応じて、左右のアニメーションより少し遅らせる場合は以下を追加 */
+		    /* animation-delay: 0.2s; */
+		}
+		
+		/* ズーム ＆ フェードインのアニメーション定義 */
+		@keyframes zoomFadeIn {
+		    0% {
+		        opacity: 0;
+		        transform: translateX(-50%) scale(0.8); /* 少し小さい状態からスタート */
+		    }
+		    100% {
+		        opacity: 1;
+		        transform: translateX(-50%) scale(1.0); /* 元のサイズ（等倍）になって表示 */
+		    }
+		}
+
 		
 		/* 成績ページ用レイアウト */
 		.ranking-container {
@@ -1663,6 +1695,7 @@
 
 <div id="fixedGoalLayer" class="goal-overlay">
 	<img class="goal-illustration" src="img/goal.png" alt="Goal">
+	<img class="announcer-illustration" src="img/announcer.png" alt="Announcer">
 </div>
 
 <div id="pageContainer">
