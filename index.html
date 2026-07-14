@@ -60,7 +60,7 @@
 		    height: 100%;       /* dvhから100%に変更して端末物理画面に固定 */
 		    min-height: 100%;
 		    overflow: hidden;   
-		    background-color: transparent !important; /* 通常ブラウザ時は透明にして背景を透かす */
+		    background-color: #000000 !important;
 		    -webkit-font-smoothing: antialiased;
 		    touch-action: pan-y; 
 		    overscroll-behavior-x: none;
@@ -80,7 +80,7 @@
 		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 20%),
 		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 20%);
 		    background-size: cover;
-		    z-index: -2; /* レイヤーを最背面に */
+		    z-index: -1; /* レイヤーを最背面に */
 		    pointer-events: none;
 		    transform: translate3d(0, 0, 0);
 		}
@@ -198,9 +198,6 @@
 		   PWA（ホーム画面から起動）された時だけのスタイル上書き
 		   ========================================================== */
 		@media (display-mode: standalone) {
-		    html, body {
-		        background-color: #000000 !important; /* PWA特有の透明バグを防ぐため黒を強制 */
-		    }
 		    .fixed-bg {
 		        z-index: -1; /* 背景レイヤーの位置をPWA環境用に再確定 */
 		        display: block !important;
