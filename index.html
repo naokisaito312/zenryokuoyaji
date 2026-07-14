@@ -2235,18 +2235,36 @@ function showPage(index) {
 
     // 2. ナビゲーションの見た目・インジケーターとクリップ領域の更新
     if (indicator && targetElement) {
-        const left = targetElement.offsetLeft;
-        const width = targetElement.offsetWidth;
-
-        // 2-a. インジケーターの位置を移動
-        indicator.style.left = `${left}px`;
-        indicator.style.width = `${width}px`;
-
-        // 2-b. 【新規対応】クリップパス領域（青色アイコンの表示範囲）をインジケーターと完全同期
-        if (navContainer) {
-            navContainer.style.setProperty('--clip-left', `${left}px`);
-            navContainer.style.setProperty('--clip-width', `${width}px`);
-        }
+		// 基準要素の本来の左端位置と幅を取得
+	    const rawLeft = targetElement.offsetLeft;
+	    const rawWidth = targetElement.offsetWidth;
+	
+	    /* ====================================================
+	       【修正】インジケーターがアイコンの中心にピッタリ合うように計算
+	       ==================================================== */
+	    // アイコンの実際の幅（CSSで指定している26px）
+	    const iconWidth = 26; 
+	    
+	    // 基準エリア（1ブロック）の中心点を割り出す
+	    const targetCenter = rawLeft + (rawWidth / 2);
+	    
+	    // インジケーター自身の幅（元のサイズ（100%-12px）/6 ≒ 48px前後のままで位置を調整する場合）
+	    // もしインジケーターの横幅を固定にしたい場合は、ここで任意の数値（例: 48）を指定しても綺麗に中央揃えになります。
+	    const indicatorWidth = rawWidth; 
+	
+	    // 中心点をベースに、インジケーターの左端（left）の位置を決定する
+	    const left = targetCenter - (indicatorWidth / 2);
+	    const width = indicatorWidth;
+	
+	    // 2-a. インジケーターの位置を移動
+	    indicator.style.left = `${left}px`;
+	    indicator.style.width = `${width}px`;
+	
+	    // 2-b. クリップパス領域（青色アイコンの表示範囲）をインジケーターと完全同期
+	    if (navContainer) {
+	        navContainer.style.setProperty('--clip-left', `${left}px`);
+	        navContainer.style.setProperty('--clip-width', `${width}px`);
+	    }
 
         // 1. 移動を開始：横に伸び、縦に少し薄くなる
         indicator.style.setProperty('--sx', '1.1'); // 横に1.1倍伸びる
