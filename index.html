@@ -1210,10 +1210,10 @@
 		    }
 		    40% {
 		        opacity: 1;
-		        transform: translateY(-50%) translateX(-15%) scaleX(1.2);
+		        transform: translateY(-50%) translateX(-15%) scaleX(1.3);
 		    }
 		    85% {
-		        transform: translateY(-50%) translateX(-15%) scaleX(1.0);
+		        transform: translateY(-50%) translateX(-15%) scaleX(1.3);
 		    }
 		    100% {
 		        opacity: 0;
@@ -1230,10 +1230,10 @@
 		    }
 		    40% {
 		        opacity: 1;
-		        transform: translateY(-50%) translateX(15%) scaleX(-1.2);
+		        transform: translateY(-50%) translateX(15%) scaleX(-1.3);
 		    }
 		    85% {
-		        transform: translateY(-50%) translateX(15%) scaleX(-1.0);
+		        transform: translateY(-50%) translateX(15%) scaleX(-1.3);
 		    }
 		    100% {
 		        opacity: 0;
@@ -1257,7 +1257,7 @@
 		/* 2. 既存の「左右の画像」を動かしているクラス（例: .active や .show）と連動させる */
 		/* ※ .active の部分は、現在JavaScriptで付与されている実際のクラス名に変えてください */
 		.goal-overlay.active .announcer-illustration {
-		    animation: zoomFadeIn 0.4s ease-out forwards;
+		    animation: zoomFadeIn 1.2s ease-out forwards;
 		}
 		
 		/* アニメーション定義 */
@@ -1266,8 +1266,16 @@
 		        opacity: 0;
 		        transform: translateX(-50%) scale(0.9);
 		    }
-		    100% {
+		    40% {
 		        opacity: 1;
+		        transform: translateX(-50%) scale(1.0);
+		    }
+		    850% {
+		        opacity: 1;
+		        transform: translateX(-50%) scale(1.0);
+		    }
+		    100% {
+		        opacity: 0;
 		        transform: translateX(-50%) scale(1.0);
 		    }
 		}
