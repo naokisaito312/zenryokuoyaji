@@ -256,27 +256,72 @@
 		        bottom: -100px; /* 現在の設定から、さらに下に移動させたい量（マイナス値など）を調整してください */
 		    }
 		}
+		/* --- 1. [修正] インジケーターのスタイル変更 --- */
 		#navIndicator {
 		    position: absolute;
-		    width: calc((100% - 12px) / 6); 
+		    /* widthとleftはJS（--clip-width, --clip-left）で制御するため初期値のみ設定 */
+		    width: var(--clip-width, calc((100% - 12px) / 6)); 
 		    height: 48px;
 		    border-radius: 24px;
 		    top: 6px; 
-		    left: 6px;
+		    left: var(--clip-left, 6px); /* JS連動用に変数化 */
 		    z-index: 1;
 		    transform: translateX(var(--gyro-x, 0px)) scale(var(--sx, 1), var(--sy, 1));
 		    transition: 
 		        left 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
 		        width 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
 		        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-		    background: rgba(0, 0, 0, 0.18);
+		    /* 重なった部分の背景色（お好みで薄い青などに調整してください） */
+		    background: rgba(0, 122, 255, 0.15); 
+		}
+		/* --- 2. [新規] 2つのレイヤーをぴったり重ねるための共通設定 --- */
+		.nav-layer {
+		    position: absolute;
+		    top: 0;
+		    left: 6px; /* #bottomNavのpadding(0 6px)に合わせる */
+		    width: calc(100% - 12px);
+		    height: 100%;
+		    display: flex;
+		    justify-content: space-around;
+		    align-items: center;
 		}
 		
+		/* --- 3. [新規] 背面レイヤー（通常時：白〜薄いグレーのアイコン） --- */
+		.nav-base {
+		    z-index: 2;
+		}
+		.nav-base .nav-icon {
+		    /* 通常時のアイコン色（白ベースの画面に馴染む薄いグレー） */
+		    filter: invert(100%) brightness(0.6); 
+		}
 		/* 非アクティブ時の文字色を透過背景に馴染むように調整 */
 		.nav-item:not(.active) {
 		    color: rgba(255, 255, 255, 1.0); 
 		}
-
+		/* --- 4. [新規] 前面レイヤー（重なった時：鮮やかな青色のアイコン） --- */
+		.nav-active {
+		    z-index: 3;
+		    pointer-events: none; /* タップ判定を透過 */
+		    /* インジケーターと重なる領域だけを切り抜いて表示 */
+		    clip-path: inset(0px calc(100% - (var(--clip-left) + var(--clip-width))) 0px var(--clip-left));
+		    /* インジケーターの移動アニメーション（0.7s）と完全に同期させる */
+		    transition: clip-path 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+		}
+		.nav-active .nav-icon {
+		    /* 重なった時のアイコン色（鮮やかなiOS風の青 #007aff） */
+		    filter: invert(38%) sepia(94%) saturate(2035%) hue-rotate(202deg) brightness(101%) contrast(106%);
+		}
+		
+		/* --- 5. [新規] 最前面レイヤー（目に見えない透明なタップ判定ボタン） --- */
+		.nav-click-targets {
+		    z-index: 4;
+		}
+		.nav-item-target {
+		    flex: 1;
+		    height: 100%;
+		    cursor: pointer;
+		    -webkit-tap-highlight-color: transparent;
+		}
 		.nav-item {
 		    flex: 1;
 		    display: flex;
@@ -292,7 +337,6 @@
 		    position: relative;
 		    z-index: 1002; /* 文字をインジケーターより手前に */
 		    -webkit-tap-highlight-color: transparent;
-		    filter: brightness(0);
 		}
 
 		.nav-item.active {
@@ -1959,21 +2003,62 @@
 </div>
 
 <nav id="bottomNav">
-	<div id="navIndicator"></div>
+    <!-- インジケーター（背景の薄い青丸やラインなど） -->
+    <div id="navIndicator"></div>
 
-	<div class="nav-item active" onclick="showPage(0)">
-        <img src="img/group.svg" alt="メンバー" class="nav-icon">
-    </div>
-    <div class="nav-item" onclick="showPage(1)">1st</div>
-    <div class="nav-item" onclick="showPage(2)">2nd</div>
-    <div class="nav-item" onclick="showPage(3)">3rd</div>
-    <div class="nav-item" onclick="showPage(4)">
-        <img src="img/trophy.svg" alt="実績" class="nav-icon">
-    </div>
-    <div class="nav-item" onclick="showPage(5)">
-        <img src="img/settings.svg" alt="設定" class="nav-icon">
+    <!-- 1. 背面レイヤー（通常：黒アイコン） -->
+    <div class="nav-layer nav-base">
+        <div class="nav-item">
+            <img src="img/members.svg" alt="メンバー" class="nav-icon">
+        </div>
+        <div class="nav-item">
+            <img src="img/1st.svg" alt="1st" class="nav-icon">
+        </div>
+        <div class="nav-item">
+            <img src="img/2nd.svg" alt="2nd" class="nav-icon">
+        </div>
+        <div class="nav-item">
+            <img src="img/3rd.svg" alt="3rd" class="nav-icon">
+        </div>
+        <div class="nav-item">
+            <img src="img/trophy.svg" alt="実績" class="nav-icon">
+        </div>
+        <div class="nav-item">
+            <img src="img/settings.svg" alt="設定" class="nav-icon">
+        </div>
     </div>
 
+    <!-- 2. 前面レイヤー（アクティブ：青アイコン / インジケーターの形に切り抜かれる） -->
+    <div class="nav-layer nav-active">
+        <div class="nav-item">
+            <img src="img/members.svg" alt="メンバー" class="nav-icon-blue">
+        </div>
+        <div class="nav-item">
+            <img src="img/1st.svg" alt="1st" class="nav-icon-blue">
+        </div>
+        <div class="nav-item">
+            <img src="img/2nd.svg" alt="2nd" class="nav-icon-blue">
+        </div>
+        <div class="nav-item">
+            <img src="img/3rd.svg" alt="3rd" class="nav-icon-blue">
+        </div>
+        <div class="nav-item">
+            <img src="img/trophy.svg" alt="実績" class="nav-icon-blue">
+        </div>
+        <div class="nav-item">
+            <img src="img/settings.svg" alt="設定" class="nav-icon-blue">
+        </div>
+    </div>
+
+    <!-- タップ判定を処理するための目に見えないボタン層 -->
+    <div class="nav-layer nav-click-targets">
+        <div class="nav-item-target" onclick="showPage(0)"></div>
+        <div class="nav-item-target" onclick="showPage(1)"></div>
+        <div class="nav-item-target" onclick="showPage(2)"></div>
+        <div class="nav-item-target" onclick="showPage(3)"></div>
+        <div class="nav-item-target" onclick="showPage(4)"></div>
+        <div class="nav-item-target" onclick="showPage(5)"></div>
+    </div>
 </nav>
 	
 <!-- QRコード生成ライブラリの読み込み -->
@@ -2131,33 +2216,40 @@ function getTeamStats(stageNum) {
 }
 
 /********** 描画・制御系 **********/
-
-
 // ページ表示とインジケーター移動の統合関数
 function showPage(index) {
     const pages = document.querySelectorAll('.page');
-    const navItems = document.querySelectorAll('.nav-item');
     const indicator = document.getElementById('navIndicator');
-	let lastIndex = 0; // 前のインデックスを保持
+    const navContainer = document.getElementById('bottomNav');
+    
+    // 【修正点】タップ判定用のターゲット要素群を取得（なければ従来のnav-itemで代用）
+    const targets = document.querySelectorAll('.nav-item-target');
+    const targetElement = targets[index] || document.querySelectorAll('.nav-base .nav-item')[index];
+    
+    let lastIndex = 0; // 前のインデックスを保持
 
     // 1. ページの表示/非表示を切り替える
     pages.forEach((p, i) => {
         p.classList.toggle('active', i === index);
     });
 
-    // 2. ナビゲーションの見た目を更新する
-    navItems.forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-    });
+    // 2. ナビゲーションの見た目・インジケーターとクリップ領域の更新
+    if (indicator && targetElement) {
+        const left = targetElement.offsetLeft;
+        const width = targetElement.offsetWidth;
 
-	if (indicator && navItems[index]) {
-		const target = navItems[index];
+        // 2-a. インジケーターの位置を移動
+        indicator.style.left = `${left}px`;
+        indicator.style.width = `${width}px`;
+
+        // 2-b. 【新規対応】クリップパス領域（青色アイコンの表示範囲）をインジケーターと完全同期
+        if (navContainer) {
+            navContainer.style.setProperty('--clip-left', `${left}px`);
+            navContainer.style.setProperty('--clip-width', `${width}px`);
+        }
 
         // 1. 移動を開始：横に伸び、縦に少し薄くなる
-        indicator.style.left = `${target.offsetLeft}px`;
-        indicator.style.width = `${target.offsetWidth}px`;
-
-        indicator.style.setProperty('--sx', '1.1'); // 横に1.4倍伸びる
+        indicator.style.setProperty('--sx', '1.1'); // 横に1.1倍伸びる
         indicator.style.setProperty('--sy', '0.8'); // 縦に0.8倍潰れる
 
         // 2. 途中で一度「逆に」縮ませる（反動をつける）
@@ -2171,8 +2263,8 @@ function showPage(index) {
             indicator.style.setProperty('--sx', '1.0');
             indicator.style.setProperty('--sy', '1.0');
         }, 500);
-	}
-	lastIndex = index;
+    }
+    lastIndex = index;
 
     // 3. 【重要】描画が完了した「直後」にスクロールを実行する
     // setTimeoutを使うことで、ブラウザの自動位置復元処理の後に実行させます
@@ -2195,6 +2287,40 @@ function showPage(index) {
     if (window.navigator.vibrate) window.navigator.vibrate(5);
 }
 
+// 画面リサイズ時にクリップ領域とインジケーターがズレるのを防ぐための補正関数
+function updateIndicatorOnResize() {
+    const navContainer = document.getElementById('bottomNav');
+    const indicator = document.getElementById('navIndicator');
+    
+    // 現在アクティブなページのインデックスを取得
+    const activePageIndex = Array.from(document.querySelectorAll('.page')).findIndex(p => p.classList.contains('active'));
+    const index = activePageIndex !== -1 ? activePageIndex : 0;
+
+    const targets = document.querySelectorAll('.nav-item-target');
+    const targetElement = targets[index] || document.querySelectorAll('.nav-base .nav-item')[index];
+
+    if (targetElement && navContainer && indicator) {
+        const left = targetElement.offsetLeft;
+        const width = targetElement.offsetWidth;
+
+        // リサイズ時はアニメーションさせずに瞬時に追従させる
+        indicator.style.transition = 'none';
+        navContainer.style.style.transition = 'none'; // clip-pathのtransitionを一時無効化したい場合
+        
+        indicator.style.left = `${left}px`;
+        indicator.style.width = `${width}px`;
+        navContainer.style.setProperty('--clip-left', `${left}px`);
+        navContainer.style.setProperty('--clip-width', `${width}px`);
+
+        // 強制レイアウト後に transition を元に戻す
+        indicator.offsetHeight; 
+        indicator.style.transition = '';
+    }
+}
+
+// リサイズイベントの登録
+window.addEventListener('resize', updateIndicatorOnResize);
+	
 /*** メンバー管理の描画 ***/
 function renderMemberList() {
     const area = document.getElementById('memberListArea');
