@@ -57,11 +57,12 @@
 		/* 💡 iOSの描画バグによる隙間（黒帯）を物理的に塞ぐ背景レイヤー */
 		.pwa-bg-cover {
 			position: fixed;
-		    top: 0;
-		    left: 0;
-		    width: 100%;
-		    /* モバイルブラウザのツールバー伸縮によるガタつきを防ぐため、物理画面の最大値に合わせる */
-		    height: 100vmax; 
+			top: -10vh;
+		    left: -10vw;
+		    bottom: -10vh;
+		    right: -10vw;
+		    width: 120vw;
+		    height: 120vh;
 		    
 		    /* 💡 ベースの黒(#000)の上に、緑と赤の放射グラデーションを重ねる */
 			background: 
