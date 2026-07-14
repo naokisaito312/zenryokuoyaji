@@ -1242,34 +1242,33 @@
 		    }
 		}
 
-		/* アナウンサー画像の配置と初期状態 */
+		/* 1. 初期状態：アニメーションは指定せず、透明＆小さくしておく */
 		.announcer-illustration {
 		    position: absolute;
-		    /* 画面の中央少し下に配置 */
-		    bottom: 15%; /* 下からの位置（％はお好みで調整してください） */
+		    bottom: 15%;
 		    left: 50%;
-		    transform: translateX(-50%) scale(0.8); /* 中央寄せにしつつ、初期状態は少し小さく */
-		    
-		    max-width: 120px; /* 画像の最大横幅（画面に合わせて調整してください） */
+		    transform: translateX(-50%) scale(0.8);
+		    max-width: 120px;
 		    height: auto;
-		    opacity: 0; /* 最初は透明 */
-		    pointer-events: none; /* クリックなどの邪魔をしないように */
-		    
-		    /* アニメーションの指定（0.5秒かけて、じわっと動かす） */
-		    animation: zoomFadeIn 0.5s ease-out forwards;
-		    /* 必要に応じて、左右のアニメーションより少し遅らせる場合は以下を追加 */
-		    /* animation-delay: 0.2s; */
+		    opacity: 0;
+		    pointer-events: none;
 		}
 		
-		/* ズーム ＆ フェードインのアニメーション定義 */
+		/* 2. 既存の「左右の画像」を動かしているクラス（例: .active や .show）と連動させる */
+		/* ※ .active の部分は、現在JavaScriptで付与されている実際のクラス名に変えてください */
+		.goal-overlay.active .announcer-illustration {
+		    animation: zoomFadeIn 0.5s ease-out forwards;
+		}
+		
+		/* アニメーション定義 */
 		@keyframes zoomFadeIn {
 		    0% {
 		        opacity: 0;
-		        transform: translateX(-50%) scale(0.8); /* 少し小さい状態からスタート */
+		        transform: translateX(-50%) scale(0.8);
 		    }
 		    100% {
 		        opacity: 1;
-		        transform: translateX(-50%) scale(1.0); /* 元のサイズ（等倍）になって表示 */
+		        transform: translateX(-50%) scale(1.0);
 		    }
 		}
 
