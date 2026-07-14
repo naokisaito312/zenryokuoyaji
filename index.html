@@ -31,9 +31,10 @@
 		    padding: 0;
 		    width: 100%;
 		    /* 高さは固定せず、中身に応じて伸びるようにする */
-			height: 100dvh;
-		    min-height: 100dvh; 
-		    background-color: #000000;
+			height: 100%;
+		    min-height: 100%; 
+		    background: transparent;
+			overflow: hidden;
 		}
 		
 		/* 💡htmlとbody自体を「真っ黒」ではなく「グラデーション」にしてしまうのが最も安全です */
@@ -46,36 +47,22 @@
 		    touch-action: none; 
 		    overscroll-behavior-x: none;
 		    overscroll-behavior: none;
-		    overflow: hidden;
+		    
 		}
 		body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             color: var(--text-main);
-			background: transparent;
+			background:
+		        radial-gradient(circle at 0% 0%, rgba(0,50,0,1) 0%, transparent 20%),
+		        radial-gradient(circle at 100% 0%, rgba(50,0,0,1) 0%, transparent 20%),
+		        #000;
+			overflow:clip;
         }
 
 		/* 💡 iOSの描画バグによる隙間（黒帯）を物理的に塞ぐ背景レイヤー */
-		.pwa-bg-cover {
-			position: fixed;
-			top: 0;
-		    left: 0;
-		    bottom: 0;
-		    right: 0;
-		    width: 100%;
-		    height: 120%;
-		    
-		    /* 💡 ベースの黒(#000)の上に、緑と赤の放射グラデーションを重ねる */
-			background: 
-		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 20%),
-		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 20%);
-		        #000000;
-		    
-		    background-size: cover;
-		    z-index: -1;
-		    pointer-events: none;
-		    
-		    /* スクロール時の描画のチラつきを抑えるためのハードウェアアクセラレーション */
-		    transform: translate3d(0, 0, 0);
+		.pwa-bg-cover{
+		    position:fixed;
+		    inset:0;
 		}
 		.fixed-bg {
 		    display: none !important;
@@ -87,7 +74,7 @@
 		    position: relative; 
 		    width: 100%;
 		    max-width: 540px;
-		    height: 100%;      
+		    height: 100dvh;      
 		    overflow: hidden;
 		    display: flex;
 		    justify-content: center;
@@ -192,9 +179,8 @@
 		   ========================================================== */
 		@media (display-mode: standalone) {
 		    html, body {
-				/* 実寸100%に固定し、余計な突き抜けを防ぐ */
-		        height: 100% !important;
-		        min-height: 100% !important;
+		        height:100dvh !important;
+		        min-height:100dvh !important;
 		        
 		        /* スクロールによる画面全体のガタつき（バウンス）を完全に禁止 */
 		        overscroll-behavior: none !important;
