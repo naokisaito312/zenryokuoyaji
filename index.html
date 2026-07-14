@@ -227,12 +227,12 @@
 		    backdrop-filter: blur(20px);
 		    -webkit-backdrop-filter: blur(20px);
 		    border-radius: 30px; 
-		    /* ★外枠のボーダーを白背景に馴染むように少し暗めのグレー透過に変更 */
 		    border: 0.5px outset rgba(0, 0, 0, 0.05);
-		    /* ★影（シャドウ）も白背景に合わせて少し柔らかい印象に変更 */
 		    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 		    height: 60px;
 		    z-index: 1000;
+		    
+		    /* 【★重要】左右の 6px 余白をここで完全に固定します */
 		    padding: 0 6px; 
 		    box-sizing: border-box;
 		    align-items: center;
@@ -243,8 +243,7 @@
 		    position: absolute;
 		    inset: 0; 
 		    border-radius: 30px; 
-		    padding: 0.5px; /* 線が太く見えすぎないよう少しシャープに */
-		    /* ★ハイライトの境界線を、白ではなくほんのり黒の透過（繊細な影）に変更 */
+		    padding: 0.5px;
 		    background: rgba(0, 0, 0, 0.15); 
 		    -webkit-mask: 
 		        linear-gradient(#fff 0 0) content-box, 
@@ -254,69 +253,70 @@
 		    pointer-events: none; 
 		    z-index: -1; 
 		}
+		
 		@media (display-mode: standalone) {
-		    .bottomNav {
+		    #bottomNav {
 		        bottom: -100px; 
 		    }
 		}
-		/* --- 1. [修正] インジケーターのスタイル変更 --- */
+		
+		/* --- 1. インジケーターのスタイル変更 --- */
 		#navIndicator {
 		    position: absolute;
-		    /* widthとleftはJS（--clip-width, --clip-left）で制御するため初期値のみ設定 */
-		    width: var(--clip-width, calc((100% - 12px) / 6)); 
+		    /* 【★重要】初期値のleftを 0 に設定（JSで渡される数値と基準を合わせる） */
+		    width: var(--clip-width, calc(100% / 6)); 
 		    height: 48px;
 		    border-radius: 24px;
 		    top: 6px; 
-		    left: var(--clip-left, 6px); /* JS連動用に変数化 */
+		    left: var(--clip-left, 0px); 
 		    z-index: 1;
 		    transform: translateX(var(--gyro-x, 0px)) scale(var(--sx, 1), var(--sy, 1));
 		    transition: 
 		        left 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
 		        width 0.7s cubic-bezier(0.19, 1, 0.22, 1), 
 		        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-		    /* 重なった部分の背景色（お好みで薄い青などに調整してください） */
 		    background: rgba(0, 0, 0, 0.10); 
 		}
-		/* --- 2. [新規] 2つのレイヤーをぴったり重ねるための共通設定 --- */
+		
+		/* --- 2. 2つのレイヤーをぴったり重ねるための共通設定 --- */
 		.nav-layer {
 		    position: absolute;
 		    top: 0;
-		    left: 6px; /* #bottomNavのpadding(0 6px)に合わせる */
-		    width: calc(100% - 12px);
+		    /* 【★重要】leftを 0、widthを 100% にし、親の padding 0 6px 内にぴったり収めます */
+		    left: 0; 
+		    width: 100%;
 		    height: 100%;
 		    display: flex;
 		    justify-content: space-around;
 		    align-items: center;
 		}
 		
-		/* --- 3. [新規] 背面レイヤー（通常時：白〜薄いグレーのアイコン） --- */
+		/* --- 3. 背面レイヤー --- */
 		.nav-base {
 		    z-index: 2;
 		}
 		.nav-base .nav-icon {
-		    /* 通常時（非アクティブ）のアイコン色：完全な黒にリセット */
 		    filter: brightness(0) saturate(100%); 
 		}
-		
-		/* 非アクティブ時の文字色を、白背景に馴染むダークグレーに調整 */
-		.nav-item:not(.active) {
-		    color: rgba(0, 0, 0, 0.45); 
+		.nav-base .nav-item {
+		    color: rgba(0, 0, 0, 0.6); 
 		}
-		/* --- 4. [新規] 前面レイヤー（重なった時：鮮やかな青色のアイコン） --- */
+		
+		/* --- 4. 前面レイヤー --- */
 		.nav-active {
 		    z-index: 3;
-		    pointer-events: none; /* タップ判定を透過 */
-		    /* インジケーターと重なる領域だけを切り抜いて表示 */
+		    pointer-events: none; 
 		    clip-path: inset(0px calc(100% - (var(--clip-left) + var(--clip-width))) 0px var(--clip-left));
-		    /* インジケーターの移動アニメーション（0.7s）と完全に同期させる */
 		    transition: clip-path 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 		}
 		.nav-active .nav-icon-blue {
-		    /* 重なった時のアイコン色（鮮やかなiOS風の青 #007aff） */
 		    filter: brightness(0) saturate(100%) invert(36%) sepia(85%) saturate(3620%) hue-rotate(210deg) brightness(97%) contrast(104%);
 		}
+		.nav-active .nav-item {
+		    color: rgba(255, 255, 255, 1.0); 
+		}
 		
-		/* --- 5. [新規] 最前面レイヤー（目に見えない透明なタップ判定ボタン） --- */
+		/* --- 5. 最前面レイヤー --- */
 		.nav-click-targets {
 		    z-index: 4;
 		}
@@ -326,6 +326,8 @@
 		    cursor: pointer;
 		    -webkit-tap-highlight-color: transparent;
 		}
+		
+		/* --- 共通のナビゲーションアイテムスタイル --- */
 		.nav-item {
 		    flex: 1;
 		    display: flex;
@@ -335,31 +337,23 @@
 		    height: 100%;
 		    font-size: 14px;
 		    font-weight: 700;
-		    color: var(--text-main); /* 背景が青くなるので、基本は白に */
 		    transition: color 0.3s ease;
 		    cursor: pointer;
 		    position: relative;
-		    z-index: 1002; /* 文字をインジケーターより手前に */
 		    -webkit-tap-highlight-color: transparent;
 		}
-
-		.nav-item.active {
-		    color: rgba(255, 255, 255, 1.0); /* フォーカス時は完全な白 */
-		}
-
-		/* アイコン（もし今後導入する場合）のサイズ */
+		
 		.nav-item i {
 		    font-size: 20px;
 		    margin-bottom: 2px;
 		}
-
+		
 		.nav-icon, .nav-icon-blue {
-			width: 26px;   /* 好みに応じて24px〜28px程度で微調整してください */
-			height: 26px;
-			object-fit: contain;
-			transition: filter 0.3s ease, opacity 0.3s ease;
-			/* 初期状態（非アクティブ）のアイコンカラーを少し薄くしたい場合は opacity を下げます */
-			opacity: 1.0; 
+		    width: 26px;   
+		    height: 26px;
+		    object-fit: contain;
+		    transition: filter 0.3s ease, opacity 0.3s ease;
+		    opacity: 1.0; 
 		}
 		
         /* --- コンテンツカード --- */
