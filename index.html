@@ -2252,11 +2252,10 @@ function showPage(index) {
 	    // 基準エリア（1ブロック）の中心点を割り出す
 	    const targetCenter = rawLeft + (rawWidth / 2);
 	    
-	    // インジケーター自身の幅（元のサイズ（100%-12px）/6 ≒ 48px前後のままで位置を調整する場合）
-	    // もしインジケーターの横幅を固定にしたい場合は、ここで任意の数値（例: 48）を指定しても綺麗に中央揃えになります。
-	    const indicatorWidth = rawWidth; 
+	    // インジケーター自体の横幅（アイコンより一回り大きいサイズ。お好みの幅に調整可）
+	    const indicatorWidth = 48; 
 	
-	    // 中心点をベースに、インジケーターの左端（left）の位置を決定する
+	    // 中心点をベースに左右対称になるよう位置を算出
 	    const left = targetCenter - (indicatorWidth / 2);
 	    const width = indicatorWidth;
 	
