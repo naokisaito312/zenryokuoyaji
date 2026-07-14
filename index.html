@@ -223,8 +223,7 @@
 		    transform: translateX(-50%);
 		    width: 94%;
 		    max-width: 550px;
-		    /* ★背景色を白の透過（65%）に変更 */
-		    background: rgba(255, 255, 255, 0.50); 
+		    background: rgba(255, 255, 255, 0.70); 
 		    backdrop-filter: blur(20px);
 		    -webkit-backdrop-filter: blur(20px);
 		    border-radius: 30px; 
@@ -295,12 +294,13 @@
 		    z-index: 2;
 		}
 		.nav-base .nav-icon {
-		    /* 通常時のアイコン色（白ベースの画面に馴染む薄いグレー） */
-		    filter: invert(100%) brightness(1.0); 
+		    /* 通常時（非アクティブ）のアイコン色：完全な黒にリセット */
+		    filter: brightness(0) saturate(100%); 
 		}
-		/* 非アクティブ時の文字色を透過背景に馴染むように調整 */
+		
+		/* 非アクティブ時の文字色を、白背景に馴染むダークグレーに調整 */
 		.nav-item:not(.active) {
-		    color: rgba(255, 255, 255, 1.0); 
+		    color: rgba(0, 0, 0, 0.45); 
 		}
 		/* --- 4. [新規] 前面レイヤー（重なった時：鮮やかな青色のアイコン） --- */
 		.nav-active {
