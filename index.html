@@ -2960,11 +2960,28 @@ function triggerGoalAnimation(direction) {
     // アニメーション開始
     layer.classList.add('active');
 
+	// 1. ホイッスル音を鳴らす
+    playWhistleSound();
+	
     setTimeout(() => {
         layer.classList.remove('active', 'slide-left', 'slide-right');
     }, 1200);
 }
 
+// ホイッスル音を再生する関数
+function playWhistleSound() {
+    // Audioオブジェクトを作成（ファイルパスを環境に合わせて変更してください）
+    const whistleAudio = new Audio('audio/whistle.mp3'); 
+    
+    // 音量の調整（0.0 から 1.0 の間）
+    whistleAudio.volume = 0.5; 
+    
+    // 再生
+    whistleAudio.play().catch(error => {
+        // ブラウザの自動再生ポリシーによってブロックされた場合のハンドリング
+        console.warn("オーディオの自動再生がブロックされました。ユーザーの操作が必要です:", error);
+    });
+}
 
 /***** 成績ページの表示 *****/
 function renderResultPage() {
