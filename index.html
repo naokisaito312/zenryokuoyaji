@@ -57,15 +57,20 @@
 
 		/* 💡 iOSの描画バグによる隙間（黒帯）を物理的に塞ぐ背景レイヤー */
 		.pwa-bg-cover {
-		    position: fixed;
-		    inset: -10px; /* 上下左右に少しはみ出させることで、1pxの隙間すら完全に塞ぎます */
-		    z-index: -1; 
-		    background-color: #000000;
+			position: fixed;
+		    /* inset: -20px に広げ、iOSの計算ズレ（数画素の隙間）を完全にカバー */
+		    inset: -20px !important; 
+		    z-index: -9999 !important; /* 確実に最背面にする */
+		    
+		    background-color: #000000 !important;
 		    background-image:
 		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 25%),
-		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 25%);
-		    background-attachment: fixed;
+		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 25%) !important;
+		    background-attachment: fixed !important;
+		    
 		    pointer-events: none; 
+		    /* iOSの描画の乱れを防ぐハードウェアアクセラレーション */
+		    transform: translate3d(0,0,0);
 		}
 		.fixed-bg {
 		    display: none !important;
@@ -182,13 +187,13 @@
 		   ========================================================== */
 		@media (display-mode: standalone) {
 		    html, body {
-				height: 100vh !important;
-        		height: -webkit-fill-available !important;
-		        /* 💡PWA起動時も全く同じグラデーションを強制適用 */
-		        background-color: #000000 !important;
-		        background-image:
-		            radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 25%),
-		            radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 25%) !important;
+				/* 実寸100%に固定し、余計な突き抜けを防ぐ */
+		        height: 100% !important;
+		        min-height: 100% !important;
+		        
+		        /* スクロールによる画面全体のガタつき（バウンス）を完全に禁止 */
+		        overscroll-behavior: none !important;
+		        -webkit-overflow-scrolling: auto !important;
 		    }
 		    header {
 		        height: calc(84px + env(safe-area-inset-top));
@@ -196,13 +201,17 @@
 		    h2 {
 		        top: calc(24px + env(safe-area-inset-top));
 		    }
+			/* ページコンテナ自体が画面下部まで引っ張られるように明示 */
 			#pageContainer {
-        		height: 100% !important;
-    		}
-		    .page {
-		        padding-top: calc(96px + env(safe-area-inset-top));
-				padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
-		    }
+				height: 100dvh !important;
+				padding-bottom: env(safe-area-inset-bottom) !important;
+				box-sizing: border-box;
+			}
+		
+			/* 各スクロールエリアの最下部に十分な余白を持たせる */
+			.page {
+				padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
+			}
 		}
 
 		/* ナビゲーション全体の親要素 */
