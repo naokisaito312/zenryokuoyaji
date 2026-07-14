@@ -305,6 +305,15 @@
 		    margin-bottom: 2px;
 		}
 
+		.nav-icon {
+			width: 24px;   /* 好みに応じて24px〜28px程度で微調整してください */
+			height: 24px;
+			object-fit: contain;
+			transition: filter 0.3s ease, opacity 0.3s ease;
+			/* 初期状態（非アクティブ）のアイコンカラーを少し薄くしたい場合は opacity を下げます */
+			opacity: 0.6; 
+		}
+		
         /* --- コンテンツカード --- */
         .card {
             background: var(--surface-color);
@@ -1952,12 +1961,19 @@
 <nav id="bottomNav">
 	<div id="navIndicator"></div>
 
-    <div class="nav-item active" onclick="showPage(0)">👥</div>
+	<div class="nav-item active" onclick="showPage(0)">
+        <img src="img/group.svg" alt="メンバー" class="nav-icon">
+    </div>
     <div class="nav-item" onclick="showPage(1)">1st</div>
     <div class="nav-item" onclick="showPage(2)">2nd</div>
     <div class="nav-item" onclick="showPage(3)">3rd</div>
-    <div class="nav-item" onclick="showPage(4)">🏆</div>
-    <div class="nav-item" onclick="showPage(5)">⚙</div>
+    <div class="nav-item" onclick="showPage(4)">
+        <img src="img/trophy.svg" alt="実績" class="nav-icon">
+    </div>
+    <div class="nav-item" onclick="showPage(5)">
+        <img src="img/settings.svg" alt="設定" class="nav-icon">
+    </div>
+
 </nav>
 	
 <!-- QRコード生成ライブラリの読み込み -->
