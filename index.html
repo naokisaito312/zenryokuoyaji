@@ -60,7 +60,7 @@
 		    height: 100%;       /* dvhから100%に変更して端末物理画面に固定 */
 		    min-height: 100%;
 		    overflow: hidden;   
-		    background-color: #000000 !important;
+		    background-color: #000000;
 		    -webkit-font-smoothing: antialiased;
 		    touch-action: pan-y; 
 		    overscroll-behavior-x: none;
@@ -74,7 +74,7 @@
 		    right: 0;
 		    bottom: 0;
 		    width: 100vw;
-		    height: 100vh;
+		    height: 100dvh;
 		    background-color: #000000; 
 		    background-image:
 		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 20%),
@@ -101,7 +101,7 @@
 		/* ｐWA時のメインエリアの余白 */
 		@media (display-mode: standalone) {
 		    #pageContainer {
-		        /* padding-top: calc(76px + env(safe-area-inset-top)); */
+		        height: 100vh; /* PWA時はツールバーが無いので通常のvhで画面いっぱいに固定 */
 		    }
 		}
 
@@ -121,7 +121,7 @@
 		    padding-top: calc(76px + env(safe-area-inset-top));
 		    padding-left: 16px;
 		    padding-right: 16px;
-		    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+		    padding-bottom: calc(84px + env(safe-area-inset-bottom));
 		    
 		    overflow-y: auto; /* コンテンツが長い場合はページ内でスクロール */
 		}
@@ -198,6 +198,9 @@
 		   PWA（ホーム画面から起動）された時だけのスタイル上書き
 		   ========================================================== */
 		@media (display-mode: standalone) {
+			html, body {
+		        background-color: #000000;
+		    }
 		    .fixed-bg {
 		        z-index: -1; /* 背景レイヤーの位置をPWA環境用に再確定 */
 		        display: block !important;
