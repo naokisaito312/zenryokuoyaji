@@ -56,18 +56,25 @@
 
 		/* 💡 iOSの描画バグによる隙間（黒帯）を物理的に塞ぐ背景レイヤー */
 		.pwa-bg-cover {
-		    position: fixed;
-		    inset: -20px !important; 
-		    z-index: -9999 !important; /* 確実に最背面にする */
+			position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    /* モバイルブラウザのツールバー伸縮によるガタつきを防ぐため、物理画面の最大値に合わせる */
+		    height: 100vmax; 
 		    
-			background: 
-			        radial-gradient(circle at 0% 0%, rgba(0, 150, 50, 0.8) 0%, transparent 70%),
-			        radial-gradient(circle at 100% 0%, rgba(180, 0, 0, 0.8) 0%, transparent 70%),
-			        #000000 !important; /* 一番最後にベースの黒を書く */
-		    background-attachment: fixed !important;
+		    /* 💡 ベースの黒(#000)の上に、緑と赤の放射グラデーションを重ねる */
+		    background: 
+		        radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 1.0) 0%, transparent 40%),
+		        radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 1.0) 0%, transparent 40%),
+		        #000000;
 		    
-		    pointer-events: none; 
-		    transform: translate3d(0,0,0);
+		    background-size: cover;
+		    z-index: -1;
+		    pointer-events: none;
+		    
+		    /* スクロール時の描画のチラつきを抑えるためのハードウェアアクセラレーション */
+		    transform: translate3d(0, 0, 0);
 		}
 		.fixed-bg {
 		    display: none !important;
