@@ -7,7 +7,6 @@
 <style>
     :root {
         --bg-color: #000000;
-        --surface-color: #1C1C1E;
         --accent-color: #0A84FF;
         --text-main: #F2F2F7;
         --text-sub: #8E8E93;
@@ -20,11 +19,14 @@
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         overflow-x: hidden;
     }
+    
+    /* 💡 赤と緑を基調とした、深みのあるリキッド風ダークグラデーション背景 */
     .fixed-bg {
         position: fixed; top: 0; left: 0; width: 100%; height: 120%;
         background-image:
-            radial-gradient(circle at 0% 0%, rgba(0, 50, 0, 0.6) 0%, transparent 30%),
-            radial-gradient(circle at 100% 0%, rgba(50, 0, 0, 0.6) 0%, transparent 30%);
+            radial-gradient(circle at 10% 20%, rgba(220, 38, 38, 0.25) 0%, transparent 45%),
+            radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.25) 0%, transparent 45%),
+            radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.9) 0%, #050505 100%);
         background-size: cover; z-index: -1; pointer-events: none;
     }
     header {
@@ -38,34 +40,42 @@
         text-align: center; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
     }
     #pageContainer {
-        padding: calc(60px + env(safe-area-inset-top)) 4px 10px 4px;
+        padding: calc(65px + env(safe-area-inset-top)) 12px 20px 12px;
         display: flex; flex-direction: column; align-items: center; width: 100%;
     }
+    
+    /* 💡 外枠のカードは背景も枠線も無しに変更 */
     .card {
-        background: var(--surface-color); border-radius: 14px;
-        padding: 12px; width: 100%; max-width: 540px;
-        border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        background: transparent;
+        padding: 0; width: 100%; max-width: 540px;
+        border: none; box-shadow: none;
     }
     
     .list-container { 
         width: 100%; 
         display: grid; 
         grid-template-columns: repeat(2, 1fr); 
-        gap: 6px; 
+        gap: 8px; 
     }
     
+    /* 💡 白色っぽく美しい「ガラス/リキッド調」のメンバーカードデザイン */
     .member-card {
         display: flex; align-items: center; justify-content: space-between;
-        background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px; 
-        padding: 6px 8px; 
-        height: 50px;    
-        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.07); 
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 12px; 
+        padding: 6px 10px; 
+        height: 52px;    
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-    /* 未支払い以外（支払い済み）の時の緑スタイル */
+    /* 未支払い以外（支払い済み）の時のグリーンリキッド風スタイル */
     .member-card.paid {
-        border-color: var(--success-color);
-        background: rgba(52, 199, 89, 0.08);
+        border-color: rgba(52, 199, 89, 0.5);
+        background: rgba(52, 199, 89, 0.15);
+        box-shadow: 0 4px 15px rgba(52, 199, 89, 0.15);
     }
     .member-detail { 
         display: flex; flex-direction: column; gap: 0px; 
@@ -73,35 +83,43 @@
         flex-grow: 1;
         padding-right: 4px;
     }
-    .member-name { font-size: 13px; font-weight: 600; color: #FFFFFF; }
+    .member-name { font-size: 14px; font-weight: 600; color: #FFFFFF; }
     .member-age { font-size: 10px; color: var(--text-sub); }
     
-    /* 💡 5択セレクトボックスのスタイル（iOS風ダークデザイン） */
+    /* セレクトボックスのガラススタイル調和 */
     .payment-select {
-        background-color: #2C2C2E;
+        background-color: rgba(255, 255, 255, 0.12);
         color: var(--text-main);
-        border: 1px solid #3A3A3C;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
         border-radius: 6px;
-        padding: 4px 6px;
+        padding: 4px 4px;
         font-size: 10px;
         font-weight: 600;
         cursor: pointer;
         outline: none;
-        max-width: 95px;
+        max-width: 90px;
         transition: all 0.2s ease;
     }
-    /* 支払い済み状態の時はセレクトボックス自体も緑枠に */
+    /* プルダウンオプションはブラウザの仕様に合わせダークに固定 */
+    .payment-select option {
+        background-color: #1C1C1E;
+        color: #FFFFFF;
+    }
+    /* 支払い済み状態の時のセレクトボックススタイル */
     .member-card.paid .payment-select {
-        border-color: var(--success-color);
-        background-color: rgba(52, 199, 89, 0.15);
+        border-color: rgba(52, 199, 89, 0.4);
+        background-color: rgba(52, 199, 89, 0.25);
     }
     
+    /* 💡 対象者を非表示にし、入金済みをセンターに強調表示 */
     .summary-box {
-        display: flex; justify-content: space-between; margin-bottom: 10px;
-        font-size: 13px; color: var(--text-sub); border-bottom: 1px solid #2C2C2E;
+        display: flex; justify-content: center; margin-bottom: 15px;
+        font-size: 14px; color: var(--text-sub);
         padding-bottom: 8px;
     }
-    .summary-item span { color: var(--text-main); font-weight: bold; font-size: 15px; }
+    .summary-item span { color: var(--text-main); font-weight: bold; font-size: 18px; }
     .error-msg { color: #FF453A; text-align: center; margin-top: 20px; }
 </style>
 
@@ -115,7 +133,7 @@
 <div id="pageContainer">
     <div class="card">
         <div class="summary-box">
-            <div class="summary-item">対象者: <span id="totalCount">0</span> 名</div>
+            <!-- 💡 入金済のみのシンプルな表示へ変更 -->
             <div class="summary-item">入金済: <span id="paidCount" style="color: var(--success-color);">0</span> 名</div>
         </div>
         <div id="errorArea" class="error-msg" style="display: none;">参加者データが見つかりません。QRコードを正しくスキャンしてください。</div>
@@ -164,7 +182,6 @@
 
     // 2. 画面の更新処理
     function updateSummary(members) {
-        document.getElementById('totalCount').innerText = members.length;
         // statusが 'unpaid'（未支払い）以外のメンバーを「入金済」としてカウント
         const paidCount = members.filter(m => m.status !== 'unpaid').length;
         document.getElementById('paidCount').innerText = paidCount;
@@ -191,14 +208,13 @@
             card.className = 'member-card';
             card.id = `member-${index}`;
 
-            // トグルスイッチからセレクトボックス（5択）に変更
             card.innerHTML = `
                     <div class="member-detail">
                         <span class="member-name">${member.name || '不明'}</span>
                         ${member.age ? `<span class="member-age">${member.age}</span>` : ''}
                     </div>
                     <select class="payment-select" id="select-${index}">
-                        <option value="unpaid">未払い</option>
+                        <option value="unpaid">未支払い</option>
                         <option value="cash">現金</option>
                         <option value="paypay">PayPay</option>
                         <option value="ticket1000">オヤジ券1000</option>
