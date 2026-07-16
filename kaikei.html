@@ -38,7 +38,6 @@
         text-align: center; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
     }
     #pageContainer {
-        /* 上部ヘッダーの余白を少し詰め、下部の余白も最小限に */
         padding: calc(60px + env(safe-area-inset-top)) 10px 10px 10px;
         display: flex; flex-direction: column; align-items: center; width: 100%;
     }
@@ -48,7 +47,6 @@
         border: 1px solid #2C2C2E; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
     
-    /* 💡 1列から「横2列」のグリッドに変更して縦幅を大幅削減 */
     .list-container { 
         width: 100%; 
         display: grid; 
@@ -56,49 +54,47 @@
         gap: 6px; 
     }
     
-    /* 💡 高さと余白をギリギリまでコンパクト化 */
     .member-card {
         display: flex; align-items: center; justify-content: space-between;
         background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 8px; 
-        padding: 6px 8px; /* 上下6px、左右8pxに縮小 */
-        height: 50px;    /* 高さを42pxで固定し均等配置 */
+        padding: 6px 8px; 
+        height: 50px;    
         transition: all 0.2s ease;
     }
+    /* 未支払い以外（支払い済み）の時の緑スタイル */
     .member-card.paid {
         border-color: var(--success-color);
         background: rgba(52, 199, 89, 0.08);
     }
     .member-detail { 
         display: flex; flex-direction: column; gap: 0px; 
-        overflow: hidden; white-space: nowrap; text-overflow: ellipsis; /* 文字溢れ対策 */
+        overflow: hidden; white-space: nowrap; text-overflow: ellipsis; 
         flex-grow: 1;
         padding-right: 4px;
     }
-    /* 💡 フォントサイズを微調整 */
-    .member-name { font-size: 18px; font-weight: 600; color: #FFFFFF; }
+    .member-name { font-size: 16px; font-weight: 600; color: #FFFFFF; }
     .member-age { font-size: 10px; color: var(--text-sub); }
     
-    /* 💡 トグルスイッチも一回り小さくミニマルに */
-    .switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .switch label {
-        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-        background-color: #3A3A3C; transition: .2s; border-radius: 24px;
-        display: flex; align-items: center; justify-content: flex-end;
-        padding-right: 6px; font-size: 11px; font-weight: bold; color: var(--text-sub);
+    /* 💡 5択セレクトボックスのスタイル（iOS風ダークデザイン） */
+    .payment-select {
+        background-color: #2C2C2E;
+        color: var(--text-main);
+        border: 1px solid #3A3A3C;
+        border-radius: 6px;
+        padding: 4px 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        max-width: 95px;
+        transition: all 0.2s ease;
     }
-    .switch label:before {
-        position: absolute; content: ""; height: 18px; width: 18px;
-        left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    /* 支払い済み状態の時はセレクトボックス自体も緑枠に */
+    .member-card.paid .payment-select {
+        border-color: var(--success-color);
+        background-color: rgba(52, 199, 89, 0.15);
     }
-    .switch input:checked + label {
-        background-color: var(--success-color);
-        justify-content: flex-start; padding-left: 6px; color: #fff;
-    }
-    /* 💡 移動距離をスイッチの縮小に合わせて調整 */
-    .switch input:checked + label:before { transform: translateX(18px); }
     
     .summary-box {
         display: flex; justify-content: space-between; margin-bottom: 10px;
@@ -132,54 +128,45 @@
 <script>
     // 1. URLパラメータからデータを抽出してデコード
     function getParams() {
-    try {
-        // 1. URLの文字列から直接「data=」の降ろしのデータを力技で取得する
-        const href = window.location.href;
-        const dataIndex = href.indexOf('data=');
-        if (dataIndex === -1) return null;
-        
-        let rawData = href.substring(dataIndex + 5); // 「data=」の5文字分後ろから末尾まで切り出し
-        
-        // 2. URLエンコード（%3D など）を完全に元の文字（= など）に戻す
-        while (rawData.includes('%')) {
-            rawData = decodeURIComponent(rawData);
-        }
-        
-        // 3. 【重要】URLのやり取りで「+」が「 」（スペース）に化けるSafari等のバグを強制修正
-        rawData = rawData.replace(/ /g, '+');
-        
-        // 4. 末尾の「=」（パディング）が削れていた場合の補完（Base64の整合性チェック）
-        while (rawData.length % 4 !== 0) {
-            rawData += '=';
-        }
-        
-        // 5. バイナリ（Uint8Array）に戻す
-        const binaryStr = atob(rawData);
-        const len = binaryStr.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryStr.charCodeAt(i);
-        }
+        try {
+            const href = window.location.href;
+            const dataIndex = href.indexOf('data=');
+            if (dataIndex === -1) return null;
+            
+            let rawData = href.substring(dataIndex + 5); 
+            
+            while (rawData.includes('%')) {
+                rawData = decodeURIComponent(rawData);
+            }
+            
+            rawData = rawData.replace(/ /g, '+');
+            
+            while (rawData.length % 4 !== 0) {
+                rawData += '=';
+            }
+            
+            const binaryStr = atob(rawData);
+            const len = binaryStr.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryStr.charCodeAt(i);
+            }
 
-        // 6. UTF-8としてデコード
-        const decoder = new TextDecoder('utf-8');
-        const jsonStr = decoder.decode(bytes);
+            const decoder = new TextDecoder('utf-8');
+            const jsonStr = decoder.decode(bytes);
 
-        // JSONパースして返す
-        return JSON.parse(jsonStr);
-    } catch (e) {
-        console.error("データデコードエラー（詳細）:", e);
-        return null;
+            return JSON.parse(jsonStr);
+        } catch (e) {
+            console.error("データデコードエラー（詳細）:", e);
+            return null;
+        }
     }
-}
-
-
-
 
     // 2. 画面の更新処理
     function updateSummary(members) {
         document.getElementById('totalCount').innerText = members.length;
-        const paidCount = members.filter(m => m.isPaid).length;
+        // statusが 'unpaid'（未支払い）以外のメンバーを「入金済」としてカウント
+        const paidCount = members.filter(m => m.status !== 'unpaid').length;
         document.getElementById('paidCount').innerText = paidCount;
     }
 
@@ -194,8 +181,8 @@
             return;
         }
 
-        // 各メンバーに入金済フラグ（isPaid）の初期値をセット
-        memberData.forEach(m => m.isPaid = false);
+        // 各メンバーの支払いステータス（status）の初期値を 'unpaid' にセット
+        memberData.forEach(m => m.status = 'unpaid');
         updateSummary(memberData);
 
         // リストの描画
@@ -204,33 +191,38 @@
             card.className = 'member-card';
             card.id = `member-${index}`;
 
+            // トグルスイッチからセレクトボックス（5択）に変更
             card.innerHTML = `
                     <div class="member-detail">
                         <span class="member-name">${member.name || '不明'}</span>
                         ${member.age ? `<span class="member-age">${member.age}</span>` : ''}
                     </div>
-                    <div class="switch">
-                        <input type="checkbox" id="chk-${index}">
-                        <label for="chk-${index}">未</label>
-                    </div>
+                    <select class="payment-select" id="select-${index}">
+                        <option value="unpaid">未支払い</option>
+                        <option value="cash">現金</option>
+                        <option value="paypay">PayPay</option>
+                        <option value="ticket1000">オヤジ券1000</option>
+                        <option value="ticket500">オヤジ券500</option>
+                    </select>
                 `;
-
 
             listContainer.appendChild(card);
 
-            // トグルスイッチの変更イベントイベント
-            const checkbox = card.querySelector(`#chk-${index}`);
-            const label = card.querySelector('label');
+            // セレクトボックスの変更イベント
+            const select = card.querySelector(`#select-${index}`);
             
-            checkbox.addEventListener('change', (e) => {
-                member.isPaid = e.target.checked;
-                if (member.isPaid) {
+            select.addEventListener('change', (e) => {
+                const selectedValue = e.target.value;
+                member.status = selectedValue;
+                
+                // 「unpaid（未支払い）」以外なら緑色のアクティブ状態にする
+                if (selectedValue !== 'unpaid') {
                     card.classList.add('paid');
-                    label.innerText = '済';
                 } else {
                     card.classList.remove('paid');
-                    label.innerText = '未';
                 }
+                
+                // 集計ボックスを更新
                 updateSummary(memberData);
             });
         });
