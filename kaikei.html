@@ -137,6 +137,13 @@
 </div>
 
 <script>
+    // URLの「data=」以降の生文字列を取得（ストレージのユニークキーに使用）
+    function getRawDataString() {
+        const href = window.location.href;
+        const dataIndex = href.indexOf('data=');
+        return dataIndex !== -1 ? href.substring(dataIndex + 5) : '';
+    }
+
     // 1. URLパラメータからデータを抽出してデコード
     function getParams() {
         try {
@@ -190,7 +197,30 @@
             return;
         }
 
-        memberData.forEach(m => m.status = 'unpaid');
+        // リロード対策：localStorageから保存データを読み込む
+        // URLのデータ部分をキーとして、そのデータごとの支払状況を管理
+        const rawDataKey = getRawDataString();
+        const localStorageKey = `payment_status_${rawDataKey}`;
+        let savedStatuses = {};
+        
+        try {
+            const savedData = localStorage.getItem(localStorageKey);
+            if (savedData) {
+                savedStatuses = JSON.parse(savedData);
+            }
+        } catch (e) {
+            console.error("ストレージの読み込みに失敗しました:", e);
+        }
+
+        // メンバーの初期ステータスを設定（保存されたデータがあればそちらを適用、なければ 'unpaid'）
+        memberData.forEach((m, index) => {
+            if (savedStatuses[index] !== undefined) {
+                m.status = savedStatuses[index];
+            } else {
+                m.status = 'unpaid';
+            }
+        });
+        
         updateSummary(memberData);
 
         // リストの描画
@@ -198,14 +228,18 @@
             const card = document.createElement('div');
             card.className = 'member-card';
             card.id = `member-${index}`;
+            
+            // 保存データに基づいて、最初から「支払い済み」カードの見た目にする
+            if (member.status !== 'unpaid') {
+                card.classList.add('paid');
+            }
 
-            // 年齢（member-age）のHTML出力を完全に削除
             card.innerHTML = `
                     <div class="member-detail">
                         <span class="member-name">${member.name || '不明'}</span>
                     </div>
                     <select class="payment-select" id="select-${index}">
-                        <option value="unpaid">未払い</option>
+                        <option value="unpaid">未支払い</option>
                         <option value="cash">現金</option>
                         <option value="paypay">PayPay</option>
                         <option value="ticket1000">オヤジ券1000</option>
@@ -217,17 +251,31 @@
 
             const select = card.querySelector(`#select-${index}`);
             
+            // セレクトボックスの初期選択状態を復元
+            select.value = member.status;
+
+            // セレクトボックス変更時のイベント
             select.addEventListener('change', (e) => {
                 const selectedValue = e.target.value;
                 member.status = selectedValue;
                 
+                // クラスの着脱
                 if (selectedValue !== 'unpaid') {
                     card.classList.add('paid');
                 } else {
                     card.classList.remove('paid');
                 }
                 
+                // 集計ボックスを更新
                 updateSummary(memberData);
+
+                // 変更された支払い状況をlocalStorageに即時保存
+                savedStatuses[index] = selectedValue;
+                try {
+                    localStorage.setItem(localStorageKey, JSON.stringify(savedStatuses));
+                } catch (err) {
+                    console.error("ストレージへの保存に失敗しました:", err);
+                }
             });
         });
     });
