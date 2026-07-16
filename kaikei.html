@@ -18,27 +18,15 @@
     
     html, body {
         margin: 0; padding: 0; width: 100%; min-height: 100dvh; 
-        background-color: transparent; color: var(--text-main);
+        background:
+        	radial-gradient(circle at left top, rgba(0,80,0,.55), transparent 35%),
+	        radial-gradient(circle at right top, rgba(120,0,0,.55), transparent 35%),
+	        #000;
+		color: var(--text-main);
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         overflow-x: hidden;
     }
-    
-    /* 赤と緑を基調とした、深みのあるリキッド風ダークグラデーション背景 */
-    .fixed-bg {
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        width: 100vw; 
-        height: 100dvh; 
-        background-image:
-            radial-gradient(circle at 10% 20%, rgba(220, 38, 38, 0.25) 0%, transparent 45%),
-            radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.25) 0%, transparent 45%),
-            radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.9) 0%, #050505 100%);
-        background-size: cover; 
-        z-index: -1; 
-        pointer-events: none;
-    }
-    
+
     header {
         position: fixed; top: 0; left: 0; width: 100%;
         padding-top: env(safe-area-inset-top); z-index: 100;
@@ -133,7 +121,6 @@
 
 </head>
 <body>
-<div class="fixed-bg"></div>
 <header>
 	<h2>会計管理</h2>
 </header>
