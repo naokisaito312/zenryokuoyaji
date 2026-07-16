@@ -6,33 +6,42 @@
 	<title>全力オヤジ祭り 会計管理システム</title>
 <style>
     :root {
-        --bg-color: #000000;
+        --bg-color: #050505;
         --accent-color: #0A84FF;
         --text-main: #F2F2F7;
         --text-sub: #8E8E93;
         --success-color: #34C759; /* iOSシステムグリーン */
     }
     *, *::before, *::after { box-sizing: border-box; }
+    
+    /* 💡 HTMLとBodyの背景を黒塗りから変更し、固定背景が見えるように透過設定 */
     html, body {
         margin: 0; padding: 0; width: 100%; min-height: 100dvh; 
-        background-color: #000000; color: var(--text-main);
+        background-color: var(--bg-color); color: var(--text-main);
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         overflow-x: hidden;
     }
     
-    /* 💡 赤と緑を基調とした、深みのあるリキッド風ダークグラデーション背景 */
+    /* 💡 画面全体に赤と緑のグラデーションを完全に固定（スクロールしても背景は動きません） */
     .fixed-bg {
-        position: fixed; top: 0; left: 0; width: 100%; height: 120%;
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100vw; 
+        height: 100dvh; /* 画面ぴったりに固定 */
         background-image:
             radial-gradient(circle at 10% 20%, rgba(220, 38, 38, 0.25) 0%, transparent 45%),
             radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.25) 0%, transparent 45%),
             radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.9) 0%, #050505 100%);
-        background-size: cover; z-index: -1; pointer-events: none;
+        background-size: cover; 
+        z-index: -1; 
+        pointer-events: none;
     }
+    
     header {
         position: fixed; top: 0; left: 0; width: 100%;
         padding-top: env(safe-area-inset-top); z-index: 100;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+        background: linear-gradient(to bottom, rgba(5, 5, 5, 0.8) 0%, transparent 100%);
         backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
     }
     h2 {
@@ -44,7 +53,7 @@
         display: flex; flex-direction: column; align-items: center; width: 100%;
     }
     
-    /* 💡 【修正箇所】背景色、枠線、影を完全に透過させました */
+    /* 💡 外枠カードは完全に透過したままに */
     .card {
         background: transparent !important;
         border: none !important;
@@ -59,7 +68,7 @@
         gap: 8px; 
     }
     
-    /* 💡 白色っぽく美しい「ガラス/リキッド調」のメンバーカードデザイン */
+    /* 💡 ガラス/リキッド調カード（半透明なので背後のグラデーションが美しく透けます） */
     .member-card {
         display: flex; align-items: center; justify-content: space-between;
         background: rgba(255, 255, 255, 0.07); 
@@ -114,7 +123,7 @@
         background-color: rgba(52, 199, 89, 0.25);
     }
     
-    /* 💡 対象者を非表示にし、入金済みをセンターに強調表示 */
+    /* 入金済みをセンターに強調表示 */
     .summary-box {
         display: flex; justify-content: center; margin-bottom: 15px;
         font-size: 14px; color: var(--text-sub);
@@ -126,6 +135,7 @@
 
 </head>
 <body>
+<!-- グラデーションを映し出す固定背景レイヤー -->
 <div class="fixed-bg"></div>
 <header>
 	<h2>会計管理</h2>
@@ -134,7 +144,6 @@
 <div id="pageContainer">
     <div class="card">
         <div class="summary-box">
-            <!-- 💡 入金済のみのシンプルな表示へ変更 -->
             <div class="summary-item">入金済: <span id="paidCount" style="color: var(--success-color);">0</span> 名</div>
         </div>
         <div id="errorArea" class="error-msg" style="display: none;">参加者データが見つかりません。QRコードを正しくスキャンしてください。</div>
