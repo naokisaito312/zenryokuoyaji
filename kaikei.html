@@ -73,7 +73,7 @@
         flex-grow: 1;
         padding-right: 4px;
     }
-    .member-name { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+    .member-name { font-size: 13px; font-weight: 600; color: #FFFFFF; }
     .member-age { font-size: 10px; color: var(--text-sub); }
     
     /* 💡 5択セレクトボックスのスタイル（iOS風ダークデザイン） */
@@ -83,7 +83,7 @@
         border: 1px solid #3A3A3C;
         border-radius: 6px;
         padding: 4px 6px;
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 600;
         cursor: pointer;
         outline: none;
@@ -198,7 +198,7 @@
                         ${member.age ? `<span class="member-age">${member.age}</span>` : ''}
                     </div>
                     <select class="payment-select" id="select-${index}">
-                        <option value="unpaid">未支払い</option>
+                        <option value="unpaid">未払い</option>
                         <option value="cash">現金</option>
                         <option value="paypay">PayPay</option>
                         <option value="ticket1000">オヤジ券1000</option>
