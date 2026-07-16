@@ -44,11 +44,12 @@
         display: flex; flex-direction: column; align-items: center; width: 100%;
     }
     
-    /* 💡 外枠のカードは背景も枠線も無しに変更 */
+    /* 💡 【修正箇所】背景色、枠線、影を完全に透過させました */
     .card {
-        background: transparent;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
         padding: 0; width: 100%; max-width: 540px;
-        border: none; box-shadow: none;
     }
     
     .list-container { 
@@ -214,7 +215,7 @@
                         ${member.age ? `<span class="member-age">${member.age}</span>` : ''}
                     </div>
                     <select class="payment-select" id="select-${index}">
-                        <option value="unpaid">未支払い</option>
+                        <option value="unpaid">未払い</option>
                         <option value="cash">現金</option>
                         <option value="paypay">PayPay</option>
                         <option value="ticket1000">オヤジ券1000</option>
