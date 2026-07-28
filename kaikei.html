@@ -234,7 +234,7 @@
                 </div>
                 <table class="balance-table">
                     <tr>
-                        <td>集金（現金）：<span id="cntCash">0</span>名</td>
+                        <td>集金（現金）</td>
                         <td id="valCash" class="num-col">¥0</td>
                     </tr>
                     <tr>
@@ -351,14 +351,20 @@
 
         document.getElementById('paidCount').innerText = paidCount;
 
-        const valCash = countCash * fee;
+        // 【更新】集金（現金）の計算ロジック
+        // (「現金」人数 × 参加費) + (「オヤジ券1000」人数 × (参加費 - 1000)) + (「オヤジ券500」人数 × (参加費 - 500))
+        const valCash = (countCash * fee) + (countTicket1000 * (fee - 1000)) + (countTicket500 * (fee - 500));
+
+        // PayPay
         const valPaypay = countPaypay * fee;
+
+        // 買取枠（マイナス計算）
         const valTicket1000 = countTicket1000 * -1000;
         const valTicket500 = countTicket500 * -500;
 
         const totalIncome = valCash + valPaypay + valTicket1000 + valTicket500;
 
-        document.getElementById('cntCash').innerText = countCash;
+        // 画面表示への反映
         document.getElementById('valCash').innerText = `¥${valCash.toLocaleString()}`;
 
         document.getElementById('cntPaypay').innerText = countPaypay;
@@ -372,6 +378,7 @@
 
         document.getElementById('totalIncomeVal').innerText = `¥${totalIncome.toLocaleString()}`;
 
+        // 支出計算
         const expCourt = Number(document.getElementById('expCourt').value) || 0;
         const expBibs = Number(document.getElementById('expBibs').value) || 0;
         const expOther = Number(document.getElementById('expOther').value) || 0;
@@ -379,6 +386,7 @@
         const totalExpense = expCourt + expBibs + expOther;
         document.getElementById('totalExpenseVal').innerText = `¥${totalExpense.toLocaleString()}`;
 
+        // 当日収支
         const netBalance = totalIncome - totalExpense;
         const netEl = document.getElementById('netBalanceVal');
         
@@ -419,7 +427,7 @@
             console.error("ストレージの読み込みに失敗しました:", e);
         }
 
-        // 初期ステータス設定（インデックス順）
+        // 初期ステータス設定
         globalMemberData.forEach((m, index) => {
             if (savedStatuses[index] !== undefined) {
                 m.status = savedStatuses[index];
@@ -428,7 +436,7 @@
             }
         });
 
-        // メンバーリスト描画（渡されたデータの配列順）
+        // メンバーリスト描画
         globalMemberData.forEach((member, index) => {
             const card = document.createElement('div');
             card.className = 'member-card';
@@ -468,7 +476,7 @@
                 
                 calculateBalance();
 
-                // インデックス順でローカルストレージに保存
+                // インデックス順で保存
                 savedStatuses[index] = selectedValue;
                 try {
                     localStorage.setItem(localStorageKey, JSON.stringify(savedStatuses));
