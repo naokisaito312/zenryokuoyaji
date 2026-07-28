@@ -3380,22 +3380,22 @@ function handlegenerateKaikeiQR() {
         return;
     }
 
-    // 2. 氏名（name）のデータだけを持ったシンプルなオブジェクト配列を作る
-    const formattedPlayers = currentPlayers.map(player => {
+    // 2. 氏名（name）とソート用フリガナ（kana）を持った一時配列を作る
+    const tempPlayers = currentPlayers.map(player => {
         // 万が一、要素自体がネストされた配列だった場合の対策
         if (Array.isArray(player)) {
-            player = player[0]; // 最初の要素を取り出す
+            player = player[0];
         }
 
         // すでに単なる「文字列」だった場合
         if (typeof player === 'string') {
-            return { name: player };
+            // members (または memberList) から名前が一致するものを探して kana を取得
+            const found = (typeof members !== 'undefined' ? members : memberList || []).find(m => m.name === player);
+            return { name: player, kana: found ? found.kana : player };
         }
         
         // オブジェクトだった場合
         if (typeof player === 'object' && player !== null) {
-            // memberListの構造に合わせて、まずは .name を最優先でチェック
-            // さらに入れ子になっている可能性（例: player.member.name など）もカバー
             const detectedName = 
                 player.name || 
                 (player.member && player.member.name) || 
@@ -3403,61 +3403,76 @@ function handlegenerateKaikeiQR() {
                 player.text || 
                 player.username || 
                 '名前なし';
+
+            // kana が元々含まれていればそれを使い、無ければ members/memberList から探す
+            let detectedKana = player.kana || (player.member && player.member.kana);
+            if (!detectedKana) {
+                const found = (typeof members !== 'undefined' ? members : memberList || []).find(m => m.name === detectedName);
+                detectedKana = found ? found.kana : detectedName;
+            }
                 
-            return { name: detectedName };
+            return { name: detectedName, kana: detectedKana };
         }
         
         // もし player が数値（uidなど）で渡ってきていた場合のフォールバック
         if (typeof player === 'number' || typeof player === 'bigint') {
-            // memberList から uid が一致するものを探す
-            const found = memberList.find(m => m.uid === player);
-            if (found) return { name: found.name };
+            const found = (typeof members !== 'undefined' ? members : memberList || []).find(m => m.uid === player);
+            if (found) return { name: found.name, kana: found.kana || found.name };
         }
         
-        // デバッグ用：何が原因で「不明」になったかをコンソールで追えるようにする
         console.warn("想定外のデータ型のため「不明」になりました:", player);
-        return { name: '不明' };
+        return { name: '不明', kana: 'フメイ' };
     });
 
+    // 2.5. kana 順（あいうえお順）に並び替え
+    tempPlayers.sort((a, b) => {
+        const kanaA = a.kana || a.name || "";
+        const kanaB = b.kana || b.name || "";
+        return kanaA.localeCompare(kanaB, "ja");
+    });
+
+    // 2.6. 元のQRコード形式（nameのみのオブジェクト配列）に整形
+    const formattedPlayers = tempPlayers.map(p => ({ name: p.name }));
+
     
-				// 3. 暗号化手順: JSON化 -> モダンなUTF-8エンコード -> Base64変換
-				const jsonStr = JSON.stringify(formattedPlayers);
-				
-				/* --- 新しいコード（Safari対応・安全版） --- */
-				const encoder = new TextEncoder();
-				const uint8Array = encoder.encode(jsonStr);
-				
-				// 【修正】スプレッド構文（...）を使わず、安全にBase64用文字列に変換する
-				let binaryStr = "";
-				for (let i = 0; i < uint8Array.byteLength; i++) {
-				    binaryStr += String.fromCharCode(uint8Array[i]);
-				}
-				const base64Data = btoa(binaryStr);
-				
-				// 4. kaikei.html への絶対パスURLを生成
-				const currentUrl = window.location.href;
-				const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-				generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
-				
-				setTimeout(() => {
-				    // 5. すでに表示されているQRコードがあればクリア
-				    const qrContainer = document.getElementById("qrcode");
-				    if (qrContainer) {
-				        qrContainer.innerHTML = "";
-				        
-				        // 6. QRコードを生成
-				        new QRCode(qrContainer, {
-				            text: generatedKaikeiUrl,
-				            width: 220,
-				            height: 220,
-				            colorDark : "#000000",
-				            colorLight : "#ffffff",
-				            correctLevel : QRCode.CorrectLevel.L
-				        });
-				    } else {
-				        console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
-				    }
-				}, 100); 
+    // 3. 暗号化手順: JSON化 -> モダンなUTF-8エンコード -> Base64変換
+    const jsonStr = JSON.stringify(formattedPlayers);
+    
+    /* --- 新しいコード（Safari対応・安全版） --- */
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(jsonStr);
+    
+    // 【修正】スプレッド構文（...）を使わず、安全にBase64用文字列に変換する
+    let binaryStr = "";
+    for (let i = 0; i < uint8Array.byteLength; i++) {
+        binaryStr += String.fromCharCode(uint8Array[i]);
+    }
+    const base64Data = btoa(binaryStr);
+    
+    // 4. kaikei.html への絶対パスURLを生成
+    const currentUrl = window.location.href;
+    const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+    generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
+    
+    setTimeout(() => {
+        // 5. すでに表示されているQRコードがあればクリア
+        const qrContainer = document.getElementById("qrcode");
+        if (qrContainer) {
+            qrContainer.innerHTML = "";
+            
+            // 6. QRコードを生成
+            new QRCode(qrContainer, {
+                text: generatedKaikeiUrl,
+                width: 220,
+                height: 220,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+        } else {
+            console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
+        }
+    }, 100); 
 }
 
 /**
