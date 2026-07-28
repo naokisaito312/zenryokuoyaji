@@ -166,6 +166,11 @@
         white-space: nowrap;
     }
     
+    /* メモ表示用のスタイル（参考表示） */
+    .memo-row td {
+        color: var(--text-sub) !important;
+    }
+
     /* 入力フォームデザイン（ガラス調） */
     .num-input {
         background: rgba(0, 0, 0, 0.4);
@@ -241,11 +246,11 @@
                         <td>集金（PayPay）：<span id="cntPaypay">0</span>名</td>
                         <td id="valPaypay" class="num-col">¥0</td>
                     </tr>
-                    <tr>
+                    <tr class="memo-row">
                         <td>オヤジ券買取：<span id="cntTicket1000">0</span>枚（-¥1,000）</td>
                         <td id="valTicket1000" class="num-col">¥0</td>
                     </tr>
-                    <tr>
+                    <tr class="memo-row">
                         <td>ワンコイン買取：<span id="cntTicket500">0</span>枚（-¥500）</td>
                         <td id="valTicket500" class="num-col">¥0</td>
                     </tr>
@@ -365,7 +370,6 @@
         const valTicket500 = countTicket500 * -500;
 
         // 収入合計：集金（現金） + 集金（PayPay）
-        // ※券買取分は「集金（現金）」で既にマイナス分が相殺反映済みのため、合計時には加算・減算しない
         const totalIncome = valCash + valPaypay;
 
         // 画面表示への反映
