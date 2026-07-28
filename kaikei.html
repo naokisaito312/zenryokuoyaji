@@ -29,7 +29,7 @@
         overflow-x: hidden;
     }
 
-    /* ヘッダーを曇りガラス風に修正 */
+    /* ヘッダー：曇りガラス風（下部ボーダー無し） */
     header {
         position: fixed; top: 0; left: 0; width: 100%;
         padding-top: env(safe-area-inset-top); 
@@ -38,7 +38,6 @@
         background: rgba(0, 0, 0, 0.65);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     h2 {
         margin: 10px 0 0 0; font-size: 1.1rem; font-weight: 700;
@@ -406,13 +405,6 @@
             return;
         }
 
-        // メンバーリストを「あいうえお順（50音順）」にソート
-        globalMemberData.sort((a, b) => {
-            const nameA = a.name || '';
-            const nameB = b.name || '';
-            return nameA.localeCompare(nameB, 'ja');
-        });
-
         // リロード対策：localStorageから保存データを読み込む
         const rawDataKey = getRawDataString();
         const localStorageKey = `payment_status_${rawDataKey}`;
@@ -427,18 +419,17 @@
             console.error("ストレージの読み込みに失敗しました:", e);
         }
 
-        // 初期ステータス設定（名前を固有キーにして保存ステータスを紐付け）
-        globalMemberData.forEach((m) => {
-            const memberKey = m.name || 'unknown';
-            if (savedStatuses[memberKey] !== undefined) {
-                m.status = savedStatuses[memberKey];
+        // 初期ステータス設定（インデックス順）
+        globalMemberData.forEach((m, index) => {
+            if (savedStatuses[index] !== undefined) {
+                m.status = savedStatuses[index];
             } else {
                 m.status = 'unpaid';
             }
         });
 
-        // メンバーリスト描画
-        globalMemberData.forEach((member) => {
+        // メンバーリスト描画（渡されたデータの配列順）
+        globalMemberData.forEach((member, index) => {
             const card = document.createElement('div');
             card.className = 'member-card';
             
@@ -477,9 +468,8 @@
                 
                 calculateBalance();
 
-                // メンバーの名前をキーにして保存（並び替えが起こってもデータがずれないように補正）
-                const memberKey = member.name || 'unknown';
-                savedStatuses[memberKey] = selectedValue;
+                // インデックス順でローカルストレージに保存
+                savedStatuses[index] = selectedValue;
                 try {
                     localStorage.setItem(localStorageKey, JSON.stringify(savedStatuses));
                 } catch (err) {
