@@ -351,17 +351,21 @@
 
         document.getElementById('paidCount').innerText = paidCount;
 
-        // 【更新】集金（現金）の計算ロジック
-        // (「現金」人数 × 参加費) + (「オヤジ券1000」人数 × (参加費 - 1000)) + (「オヤジ券500」人数 × (参加費 - 500))
-        const valCash = (countCash * fee) + (countTicket1000 * (fee - 1000)) + (countTicket500 * (fee - 500));
+        // 【集金（現金）】
+        // 通常現金の人 + オヤジ券1000（参加費-1000円を現金で回収） + ワンコイン（参加費-500円を現金で回収）
+        // ※ 参加費が1000円以下の場合は0円未満にならないよう Math.max でケア
+        const cashFromTicket1000 = countTicket1000 * Math.max(0, fee - 1000);
+        const cashFromTicket500 = countTicket500 * Math.max(0, fee - 500);
+        const valCash = (countCash * fee) + cashFromTicket1000 + cashFromTicket500;
 
-        // PayPay
+        // 【集金（PayPay）】
         const valPaypay = countPaypay * fee;
 
-        // 買取枠（マイナス計算）
+        // 【券買取（マイナス表示）】
         const valTicket1000 = countTicket1000 * -1000;
         const valTicket500 = countTicket500 * -500;
 
+        // 収入合計
         const totalIncome = valCash + valPaypay + valTicket1000 + valTicket500;
 
         // 画面表示への反映
