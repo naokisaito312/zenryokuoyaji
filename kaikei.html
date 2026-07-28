@@ -29,16 +29,23 @@
         overflow-x: hidden;
     }
 
+    /* ヘッダーを曇りガラス風に修正 */
     header {
         position: fixed; top: 0; left: 0; width: 100%;
-        padding-top: env(safe-area-inset-top); z-index: 100;
+        padding-top: env(safe-area-inset-top); 
+        padding-bottom: 10px;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     h2 {
-        margin: 12px 0 0 0; font-size: 1.1rem; font-weight: 700;
+        margin: 10px 0 0 0; font-size: 1.1rem; font-weight: 700;
         text-align: center; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
     }
     #pageContainer {
-        padding: calc(50px + env(safe-area-inset-top)) 4px 20px 4px;
+        padding: calc(56px + env(safe-area-inset-top)) 4px 20px 4px;
         display: flex; flex-direction: column; align-items: center; width: 100%;
 		background: transparent;
     }
@@ -211,7 +218,7 @@
         <!-- 収支計算エリア -->
         <div class="balance-container">
             <!-- ■ 参加費設定 -->
-			<div class="balance-card" style="padding: 12px 14px;">
+            <div class="balance-card" style="padding: 12px 14px;">
                 <div class="balance-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
                     <span>■ 参加費（1名あたり）</span>
                     <div>
@@ -327,10 +334,8 @@
 
     // 2. 収支・金額の動的計算＆表示更新
     function calculateBalance() {
-        // 参加費の設定値を取得（未入力時は0）
         const fee = Number(document.getElementById('feeInput').value) || 0;
 
-        // ステータスごとの人数を集計
         let countCash = 0;
         let countPaypay = 0;
         let countTicket1000 = 0;
@@ -345,18 +350,15 @@
             if (m.status !== 'unpaid') paidCount++;
         });
 
-        // 支払い済み人数の更新
         document.getElementById('paidCount').innerText = paidCount;
 
-        // 各収入金額の計算
         const valCash = countCash * fee;
         const valPaypay = countPaypay * fee;
-        const valTicket1000 = countTicket1000 * -1000; // マイナス計算
-        const valTicket500 = countTicket500 * -500;   // マイナス計算
+        const valTicket1000 = countTicket1000 * -1000;
+        const valTicket500 = countTicket500 * -500;
 
         const totalIncome = valCash + valPaypay + valTicket1000 + valTicket500;
 
-        // 画面（収入）への反映
         document.getElementById('cntCash').innerText = countCash;
         document.getElementById('valCash').innerText = `¥${valCash.toLocaleString()}`;
 
@@ -371,7 +373,6 @@
 
         document.getElementById('totalIncomeVal').innerText = `¥${totalIncome.toLocaleString()}`;
 
-        // 支出金額の取得・計算
         const expCourt = Number(document.getElementById('expCourt').value) || 0;
         const expBibs = Number(document.getElementById('expBibs').value) || 0;
         const expOther = Number(document.getElementById('expOther').value) || 0;
@@ -379,7 +380,6 @@
         const totalExpense = expCourt + expBibs + expOther;
         document.getElementById('totalExpenseVal').innerText = `¥${totalExpense.toLocaleString()}`;
 
-        // 当日収支（収入合計 - 支出合計）
         const netBalance = totalIncome - totalExpense;
         const netEl = document.getElementById('netBalanceVal');
         
@@ -406,6 +406,13 @@
             return;
         }
 
+        // メンバーリストを「あいうえお順（50音順）」にソート
+        globalMemberData.sort((a, b) => {
+            const nameA = a.name || '';
+            const nameB = b.name || '';
+            return nameA.localeCompare(nameB, 'ja');
+        });
+
         // リロード対策：localStorageから保存データを読み込む
         const rawDataKey = getRawDataString();
         const localStorageKey = `payment_status_${rawDataKey}`;
@@ -420,20 +427,20 @@
             console.error("ストレージの読み込みに失敗しました:", e);
         }
 
-        // 初期ステータス設定
-        globalMemberData.forEach((m, index) => {
-            if (savedStatuses[index] !== undefined) {
-                m.status = savedStatuses[index];
+        // 初期ステータス設定（名前を固有キーにして保存ステータスを紐付け）
+        globalMemberData.forEach((m) => {
+            const memberKey = m.name || 'unknown';
+            if (savedStatuses[memberKey] !== undefined) {
+                m.status = savedStatuses[memberKey];
             } else {
                 m.status = 'unpaid';
             }
         });
 
         // メンバーリスト描画
-        globalMemberData.forEach((member, index) => {
+        globalMemberData.forEach((member) => {
             const card = document.createElement('div');
             card.className = 'member-card';
-            card.id = `member-${index}`;
             
             if (member.status !== 'unpaid') {
                 card.classList.add('paid');
@@ -443,7 +450,7 @@
                 <div class="member-detail">
                     <span class="member-name">${member.name || '不明'}</span>
                 </div>
-                <select class="payment-select" id="select-${index}">
+                <select class="payment-select">
                     <option value="unpaid">未払い</option>
                     <option value="cash">現金</option>
                     <option value="paypay">PayPay</option>
@@ -454,7 +461,7 @@
 
             listContainer.appendChild(card);
 
-            const select = card.querySelector(`#select-${index}`);
+            const select = card.querySelector('.payment-select');
             select.value = member.status;
 
             // ステータス変更時の処理
@@ -468,11 +475,11 @@
                     card.classList.remove('paid');
                 }
                 
-                // 再計算
                 calculateBalance();
 
-                // localStorageに保存
-                savedStatuses[index] = selectedValue;
+                // メンバーの名前をキーにして保存（並び替えが起こってもデータがずれないように補正）
+                const memberKey = member.name || 'unknown';
+                savedStatuses[memberKey] = selectedValue;
                 try {
                     localStorage.setItem(localStorageKey, JSON.stringify(savedStatuses));
                 } catch (err) {
