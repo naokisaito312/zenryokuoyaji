@@ -2727,10 +2727,26 @@ function runLottery(uid, stageNum, btnElement) {
     const counts = { A: 0, B: 0, C: 0, D: 0 };
     participants.forEach(p => { if(p[stageKey]) counts[p[stageKey]]++; });
 
-    const availableTeams = Object.keys(counts).filter(t => counts[t] < 5);
-    if (availableTeams.length === 0) return;
+    // =========================================================
+    // 【変更箇所】各チームの「残枠数」を重み（weight）として算出
+    // =========================================================
+    const maxPerTeam = 5; // 1チームあたりの定員
+    const teamPool = [];
 
-    const resultTeam = availableTeams[Math.floor(Math.random() * availableTeams.length)];
+    Object.keys(counts).forEach(team => {
+        const remainingSlots = maxPerTeam - counts[team];
+        // 残枠数の分だけ、配列にチーム名を押し込む（例: 残り3枠なら ['A', 'A', 'A']）
+        for (let i = 0; i < remainingSlots; i++) {
+            teamPool.push(team);
+        }
+    });
+
+    // 残枠が全チーム0の場合は終了
+    if (teamPool.length === 0) return;
+
+    // 残枠のプールから完全にランダムで1つ選ぶ（＝枠数に応じた重み付け抽選）
+    const resultTeam = teamPool[Math.floor(Math.random() * teamPool.length)];
+    // =========================================================
     
     const player = memberList.find(m => m.uid === uid);
     player[stageKey] = resultTeam;
