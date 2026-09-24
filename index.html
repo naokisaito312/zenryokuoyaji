@@ -1108,6 +1108,17 @@
 		    background: var(--accent-color);
 		    transform: scale(0.90);
 		}
+		/* スペシャルボタン（少し明るい緑色） */
+		.scorer-btn.sp-btn {
+		    background: rgba(48, 209, 88, 0.2);
+		    border-color: #30D158;
+		    color: #30D158;
+		}
+		
+		.scorer-btn.sp-btn:active {
+		    background: #30D158;
+		    color: #000000;
+		}
 		
 		.played-check {
 		    display: flex;
@@ -2817,6 +2828,7 @@ function renderMatchArea(stageNum) {
                 <div class="special-btns-row">
                     <button class="scorer-btn" style="background:rgba(255,69,58,0.2); color:#FF453A;" onclick="addGoalDirectly(${stageNum}, ${match.id}, 'OG', '${teamLetter}')">オウンゴール</button>
                     <button class="scorer-btn" style="background:rgba(255,159,10,0.2); color:#FF9F0A;" onclick="addGoalDirectly(${stageNum}, ${match.id}, 'RV', '${teamLetter}')">リベンジ</button>
+					<button class="scorer-btn sp-btn" onclick="addScorer(${stageNum}, ${match.id}, '${teamKey}', 'SP')">スペシャル</button>
                 </div>
             `;
             return html;
