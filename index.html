@@ -2891,6 +2891,7 @@ function addGoalDirectly(stageNum, matchId, uid, teamLetter) {
     let scorerName = "";
     if (uid === 'OG') scorerName = "オウンゴール";
     else if (uid === 'RV') scorerName = "リベンジ";
+	else if (uid === 'SP') scorerName = "スペシャル";
     else {
         const member = memberList.find(m => m.uid === uid);
         if (member) scorerName = member.name;
