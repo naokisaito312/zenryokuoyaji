@@ -3035,15 +3035,16 @@ function renderResultPage() {
             multiplier = 2;
         }
 
-        // 【修正箇所】不参加ステージの得点(undefined)を 0 に置換して安全に合計する
+        // 不参加ステージの得点(undefined)を 0 に置換して安全に合計する
         const totalGoals = (p.score1 || 0) + (p.score2 || 0) + (p.score3 || 0);
 
         // MVP用の加算得点
         const mvpMultiplier = scoreSettings.mvp.applyHandicap ? multiplier : 1;
         const mvpWeightedScore = totalGoals * mvpMultiplier;
 
-        // 得点王用の加算得点
-        const scorerMultiplier = scoreSettings.topScorer.applyHandicap ? multiplier : 1;
+        // 得点王用の加算得点（「カントク」は設定がオフでも常にブーストを適用）
+        const isKantoku = p.name.includes("カントク");
+        const scorerMultiplier = (isKantoku || scoreSettings.topScorer.applyHandicap) ? multiplier : 1;
         const scorerWeightedScore = totalGoals * scorerMultiplier;
 
         // 各プレイヤーの勝・分・負をカウントする関数
@@ -3080,7 +3081,7 @@ function renderResultPage() {
             weightedScore: scorerWeightedScore, // 得点王用（設定反映済）
             mvpPoint: (mvpWeightedScore + totalTeamPoints) || 0, // MVP用（設定反映済）
             results: [st1.str, st2.str, st3.str],
-            totalRawScore: totalGoals // 【修正箇所】安全に計算された合計
+            totalRawScore: totalGoals // 安全に計算された合計
         };
     });
 
