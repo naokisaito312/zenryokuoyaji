@@ -3105,10 +3105,10 @@ function renderResultPage() {
         const currentDrawPts = isKantoku ? (scoreSettings.kantoku?.draw ?? 3) : (scoreSettings.mvp.draw || 0);
         const currentLosePts = isKantoku ? (scoreSettings.kantoku?.lose ?? 1) : (scoreSettings.mvp.lose || 0);
 		
-        [st1, st2, st3].forEach(st => {
-            totalTeamPoints += st.w * (scoreSettings.mvp.win || 0);
-            totalTeamPoints += st.d * (scoreSettings.mvp.draw || 0);
-            totalTeamPoints += st.l * (scoreSettings.mvp.lose || 0);
+		[st1, st2, st3].forEach(st => {
+            totalTeamPoints += st.w * currentWinPts;
+            totalTeamPoints += st.d * currentDrawPts;
+            totalTeamPoints += st.l * currentLosePts;
         });
 
         return {
