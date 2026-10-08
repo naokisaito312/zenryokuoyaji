@@ -1938,7 +1938,25 @@
                 </div>
             </div>
         </div>
-
+		
+		<div class="settings-group">
+            <h3 class="settings-title">カントク勝ち点設定</h3>
+            <div class="settings-card">
+                <div class="setting-item">
+                    <span>勝ち</span>
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" value="4" onchange="updateSetting('kantoku', 'win', this.value)">
+                </div>
+                <div class="setting-item">
+                    <span>分け</span>
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" value="3" onchange="updateSetting('kantoku', 'draw', this.value)">
+                </div>
+                <div class="setting-item">
+                    <span>負け</span>
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" value="1" onchange="updateSetting('kantoku', 'lose', this.value)">
+                </div>
+            </div>
+        </div>
+		
         <div class="settings-group">
             <h3 class="settings-title">ブースト適用設定</h3>
             <p style="font-size: 11px; color: var(--text-sub); margin: -4px 0 8px 4px;">
@@ -2072,11 +2090,13 @@ let scoreSettings = {
         win: 3, draw: 2, lose: 1,
         applyHandicap: true // MVP計算に得点加算を適用するか
     },
+    kantoku: {
+        win: 4, draw: 3, lose: 1 // カントク専用勝ち点設定
+    },
     topScorer: { 
         applyHandicap: true // 得点王計算に得点加算を適用するか
     }
 };
-
 const members = [
     { uid:  1, name: "カントク", kana: "カントク", birth: "1961/1/24" },
     { uid:  2, name: "クロマン", kana: "クロマン", birth: "1984/6/3" },
@@ -2128,12 +2148,12 @@ const members = [
     { uid: 48, name: "斉藤まさる", kana: "サイトウマサル", birth: "" },
     { uid: 49, name: "富永", kana: "トミナガ", birth: "" },
     { uid: 50, name: "きだい", kana: "ゴーシ", birth: "" },
-				{ uid: 51, name: "山下", kana: "ヤマシタ", birth: "" },
-				{ uid: 52, name: "町田", kana: "マチダ", birth: "1973/3/23" },
-				{ uid: 53, name: "つんちゃん", kana: "ツンチャン", birth: "" },
-				{ uid: 54, name: "藤崎", kana: "フジサキ", birth: "" },
-				{ uid: 55, name: "若林", kana: "ワカバヤシ", birth: "" },
-				{ uid: 56, name: "志村", kana: "シムラ", birth: "" }
+	{ uid: 51, name: "山下", kana: "ヤマシタ", birth: "" },
+	{ uid: 52, name: "町田", kana: "マチダ", birth: "1973/3/23" },
+	{ uid: 53, name: "つんちゃん", kana: "ツンチャン", birth: "" },
+	{ uid: 54, name: "藤崎", kana: "フジサキ", birth: "" },
+	{ uid: 55, name: "若林", kana: "ワカバヤシ", birth: "" },
+	{ uid: 56, name: "志村", kana: "シムラ", birth: "" }
 ];
 
 
@@ -2305,7 +2325,19 @@ function showPage(index) {
     if (index === 0) renderMemberList();
     if (index >= 1 && index <= 3) renderStagePage(index);
     if (index === 4) renderResultPage();
-
+	if (index === 5) {
+        // 設定ページ表示時に入力欄の値を最新データと同期
+        const inputs = document.querySelectorAll('#page5 input[type="number"]');
+        if (inputs.length >= 6) {
+            inputs[0].value = scoreSettings.mvp.win;
+            inputs[1].value = scoreSettings.mvp.draw;
+            inputs[2].value = scoreSettings.mvp.lose;
+            inputs[3].value = scoreSettings.kantoku?.win ?? 4;
+            inputs[4].value = scoreSettings.kantoku?.draw ?? 3;
+            inputs[5].value = scoreSettings.kantoku?.lose ?? 1;
+        }
+    }
+	
     if (window.navigator.vibrate) window.navigator.vibrate(5);
 }
 
@@ -3069,6 +3101,10 @@ function renderResultPage() {
 
         // --- 設定された勝ち点(scoreSettings)を直接計算に反映 ---
         let totalTeamPoints = 0;
+		const currentWinPts  = isKantoku ? (scoreSettings.kantoku?.win ?? 4)  : (scoreSettings.mvp.win || 0);
+        const currentDrawPts = isKantoku ? (scoreSettings.kantoku?.draw ?? 3) : (scoreSettings.mvp.draw || 0);
+        const currentLosePts = isKantoku ? (scoreSettings.kantoku?.lose ?? 1) : (scoreSettings.mvp.lose || 0);
+		
         [st1, st2, st3].forEach(st => {
             totalTeamPoints += st.w * (scoreSettings.mvp.win || 0);
             totalTeamPoints += st.d * (scoreSettings.mvp.draw || 0);
