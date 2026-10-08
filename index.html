@@ -3071,7 +3071,8 @@ function renderResultPage() {
         const totalGoals = (p.score1 || 0) + (p.score2 || 0) + (p.score3 || 0);
 
         // MVP用の加算得点
-        const mvpMultiplier = scoreSettings.mvp.applyHandicap ? multiplier : 1;
+		const isKantoku = p.name.includes("カントク");
+        const mvpMultiplier = (isKantoku || scoreSettings.mvp.applyHandicap) ? multiplier : 1;
         const mvpWeightedScore = totalGoals * mvpMultiplier;
 
         // 得点王用の加算得点（「カントク」は設定がオフでも常にブーストを適用）
