@@ -2332,9 +2332,9 @@ function showPage(index) {
             inputs[0].value = scoreSettings.mvp.win;
             inputs[1].value = scoreSettings.mvp.draw;
             inputs[2].value = scoreSettings.mvp.lose;
-            inputs[3].value = scoreSettings.kantoku?.win ?? 4;
-            inputs[4].value = scoreSettings.kantoku?.draw ?? 3;
-            inputs[5].value = scoreSettings.kantoku?.lose ?? 1;
+            inputs[3].value = scoreSettings.kantoku.win ?? 4;
+            inputs[4].value = scoreSettings.kantoku.draw ?? 3;
+            inputs[5].value = scoreSettings.kantoku.lose ?? 1;
         }
     }
 	
@@ -3101,9 +3101,9 @@ function renderResultPage() {
 
         // --- 設定された勝ち点(scoreSettings)を直接計算に反映 ---
         let totalTeamPoints = 0;
-		const currentWinPts  = isKantoku ? (scoreSettings.kantoku?.win ?? 4)  : (scoreSettings.mvp.win || 0);
-        const currentDrawPts = isKantoku ? (scoreSettings.kantoku?.draw ?? 3) : (scoreSettings.mvp.draw || 0);
-        const currentLosePts = isKantoku ? (scoreSettings.kantoku?.lose ?? 1) : (scoreSettings.mvp.lose || 0);
+		      const currentWinPts  = isKantoku ? (scoreSettings.kantoku.win ?? 4)  : (scoreSettings.mvp.win || 0);
+        const currentDrawPts = isKantoku ? (scoreSettings.kantoku.draw ?? 3) : (scoreSettings.mvp.draw || 0);
+        const currentLosePts = isKantoku ? (scoreSettings.kantoku.lose ?? 1) : (scoreSettings.mvp.lose || 0);
 		
 		[st1, st2, st3].forEach(st => {
             totalTeamPoints += st.w * currentWinPts;
