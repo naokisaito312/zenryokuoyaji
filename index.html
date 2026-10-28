@@ -2336,6 +2336,12 @@ function showPage(index) {
             inputs[4].value = scoreSettings.kantoku.draw ?? 3;
             inputs[5].value = scoreSettings.kantoku.lose ?? 1;
         }
+		// スイッチの状態も同期（追加）
+        const mvpCheck = document.getElementById('mvpHandicap');
+        if (mvpCheck) mvpCheck.checked = scoreSettings.mvp.applyHandicap;
+
+        const scorerCheck = document.getElementById('scorerHandicap');
+        if (scorerCheck) scorerCheck.checked = scoreSettings.topScorer.applyHandicap;
     }
 	
     if (window.navigator.vibrate) window.navigator.vibrate(5);
@@ -3201,7 +3207,8 @@ function saveToStorage() {
     const data = {
         memberList: memberList,
         playerList: playerList,
-        stageMatches: stageMatches // 試合結果も保存
+        stageMatches: stageMatches,
+		scoreSettings: scoreSettings
     };
     localStorage.setItem('ZenryokuAppData', JSON.stringify(data));
 }
@@ -3302,11 +3309,13 @@ function calculateMemberScore(member) {
 // 数値設定の更新
 function updateSetting(type, result, value) {
     scoreSettings[type][result] = parseInt(value) || 0;
+	saveToStorage();
 }
 
 // オンオフ設定の更新
 function updateToggle(type, isChecked) {
     scoreSettings[type].applyHandicap = isChecked;
+	saveToStorage();
 }
 
 // --- データの書き出し (Export) ---
