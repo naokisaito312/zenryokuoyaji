@@ -2424,8 +2424,8 @@ function renderMemberList() {
 	
     const maxLimit = teamCount * 5;
 	
-    const currentCount = playerList.length;
-    h2.innerHTML = `メンバー管理 <span class="count-badge">${currentCount}/20</span>`;
+	const currentCount = playerList.length;
+    h2.innerHTML = `メンバー管理 <span class="count-badge">${currentCount}/${maxLimit}</span>`;
     
     // --- FLIPアニメーションの準備: 現在の位置を記録 ---
     const cards = area.querySelectorAll('.member-card');
