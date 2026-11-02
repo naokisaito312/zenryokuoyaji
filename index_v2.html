@@ -848,6 +848,9 @@
 		    gap: 5px;
 		    width: 98%;
 		}
+		.team-grid.teams-5 {
+		    grid-template-columns: repeat(5, 1fr);
+		}
 
 		.team-box {
 			min-width: 90px;
@@ -1814,6 +1817,7 @@
 	            <div class="team-box team-b-bg"><h3>B</h3><div id="teamList1-B"></div></div>
 	            <div class="team-box team-c-bg"><h3>C</h3><div id="teamList1-C"></div></div>
 	            <div class="team-box team-d-bg"><h3>D</h3><div id="teamList1-D"></div></div>
+				<div class="team-box team-e-bg" id="teamBox1-E"><h3>E</h3><div id="teamList1-E"></div></div>
 	        </div>
 	    </div>
 
@@ -2787,7 +2791,27 @@ function renderStagePage(stageNum) {
     }
 
 	// --- チーム分け結果の描画部分 ---
-	['A', 'B', 'C', 'D'].forEach(t => {
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const teams = teamCount === 5 ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
+
+    // グリッドの列数クラスを切り替え
+    const teamGrid = document.getElementById(`teamGrid${stageNum}`);
+    if (teamGrid) {
+        if (teamCount === 5) {
+            teamGrid.classList.add('teams-5');
+        } else {
+            teamGrid.classList.remove('teams-5');
+        }
+    }
+
+    // Eチームのボックス自体の表示/非表示を切り替え
+    const eBox = document.getElementById(`teamBox${stageNum}-E`);
+    if (eBox) {
+        eBox.style.display = (teamCount === 5) ? 'block' : 'none';
+    }
+
+	// --- チーム分け結果の描画部分 ---
+	teams.forEach(t => {
         const listArea = document.getElementById(`teamList${stageNum}-${t}`);
         if (listArea) {
             const membersInTeam = participants.filter(p => p[stageKey] === t);
@@ -2805,7 +2829,11 @@ function runLottery(uid, stageNum, btnElement) {
     const stageKey = `stage${stageNum}`;
     const participants = memberList.filter(m => playerList.includes(m.uid));
     
-    const counts = { A: 0, B: 0, C: 0, D: 0 };
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const teams = teamCount === 5 ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
+
+    const counts = {};
+    teams.forEach(t => counts[t] = 0);
     participants.forEach(p => { if(p[stageKey]) counts[p[stageKey]]++; });
 
     // =========================================================
