@@ -2187,7 +2187,10 @@ let playerList = [];
 
 /***** プレイヤーの追加 *****/
 function addPlayer(targetUid) {
-	if (playerList.length >= 20) {
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const maxLimit = teamCount * 5; // 4チームなら20、5チームなら25
+
+	if (playerList.length >= maxLimit) {
 		return;
 	}
 
@@ -2408,13 +2411,20 @@ function renderMemberList() {
     const h2 = document.querySelector('#page0 h2');
     if (!area || !h2) return;
 
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const baseCounts = { A: 0, B: 0, C: 0, D: 0 };
+    if (teamCount === 5) baseCounts.E = 0;
+
     // 各ステージごとの現在のチーム人数をカウント
     const teamCounts = {
-        stage1: { A:0, B:0, C:0, D:0 },
-        stage2: { A:0, B:0, C:0, D:0 },
-        stage3: { A:0, B:0, C:0, D:0 }
+        stage1: { ...baseCounts },
+        stage2: { ...baseCounts },
+        stage3: { ...baseCounts }
     };
-
+	
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const maxLimit = teamCount * 5;
+	
     const currentCount = playerList.length;
     h2.innerHTML = `メンバー管理 <span class="count-badge">${currentCount}/20</span>`;
     
@@ -2452,7 +2462,7 @@ function renderMemberList() {
         const age = calculateAge(member.birth);
 		const birthDisplay = member.birth ? `(${member.birth})` : "(未設定)";
 		const ageDisplay = age === "??" ? "" : `${age}歳 `;
-        const isFull = currentCount >= 20;
+        const isFull = currentCount >= maxLimit;
 
         const card = document.createElement('div');
 		card.className = `member-card ${isRegistered ? 'registered' : ''}`;
@@ -2622,7 +2632,12 @@ function togglePlayer(uid) {
 /***** 選択肢の動的生成（上限5名チェック） *****/
 function createOptions(currentValue, counts) {
     let html = `<option value="">--</option>`;
-    ['A', 'B', 'C', 'D'].forEach(t => {
+    const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const teams = teamCount === 5 ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
+
+    teams.forEach(t => {
+        if (counts[t] === undefined) counts[t] = 0;
+
         // 自分が既にそのチームである、またはそのチームが5名未満なら表示
         if (currentValue === t || counts[t] < 5) {
             const selected = currentValue === t ? 'selected' : '';
