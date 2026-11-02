@@ -2020,9 +2020,9 @@
 		    <h3 class="settings-title">会計用</h3>
 		    <div class="settings-card">
 		        <!-- QR作成ボタン -->
-		        <div id="btnCreateQr" class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
-		            <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
-		        </div>
+				<div class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
+				    <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
+				</div>
 		        
 		        <!-- QRコード表示エリア（display:none時のバグを防ぐため、ラッパーのスタイルを調整） -->
 		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="display: none; flex-direction: column; align-items: center; gap: 16px; border-bottom: none; margin-bottom: 6px; width: 100%;">
@@ -3639,18 +3639,16 @@ function handlegenerateKaikeiQR() {
     }
     const base64Data = btoa(binaryStr);
     
-    // 4. kaikei.html への絶対パスURLを生成
+	// 4. kaikei.html への絶対パスURLを生成
     const currentUrl = window.location.href;
     const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
     generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
     
     setTimeout(() => {
-        // 5. すでに表示されているQRコードがあればクリア
         const qrContainer = document.getElementById("qrcode");
         if (qrContainer) {
             qrContainer.innerHTML = "";
             
-            // 6. QRコードを生成
             new QRCode(qrContainer, {
                 text: generatedKaikeiUrl,
                 width: 220,
@@ -3659,10 +3657,12 @@ function handlegenerateKaikeiQR() {
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.L
             });
-        } else {
-            console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
+
+            // ★ ここで成功時のみ表示を切り替える
+            document.getElementById('qrCodeWrapper').style.display = 'flex';
+            document.getElementById('btnCopyLink').style.display = 'flex';
         }
-    }, 100); 
+    }, 100);
 }
 
 /**
@@ -3682,25 +3682,6 @@ function copyKaikeiLink() {
         alert("コピーに失敗しました。");
     });
 }
-
-document.getElementById('btnCreateQr').addEventListener('click', function() {
-    // 1. まずSafari対策・文字化け対策済みの関数を実行してQRコードとURLを生成する
-    // handlegenerateKaikeiQR();
-
-    // ※ handlegenerateKaikeiQRの中でプレイヤーがいない場合の alert や return は処理されるため、
-    // ここでは生成されたあとのラッパーやコピーボタンの表示制御だけを行います。
-    
-    // 2. プレイヤーが存在して無事にURLが生成された場合のみ表示を切り替える
-    // (generatedKaikeiUrl は handlegenerateKaikeiQR 内で値が代入されるグローバル変数である前提)
-    if (typeof generatedKaikeiUrl !== 'undefined' && generatedKaikeiUrl) {
-        const qrWrapper = document.getElementById('qrCodeWrapper');
-        if (qrWrapper) qrWrapper.style.display = 'flex';
-        
-        const qrLink = document.getElementById('btnCopyLink');
-        if (qrLink) qrLink.style.display = 'flex';
-    }
-});
-
 
 // --- ナビゲーション・ドラッグ＆スナップ処理 ---
 const nav = document.getElementById('bottomNav');
