@@ -3328,7 +3328,8 @@ function loadFromStorage() {
                 const saved = data.stageMatches?.stage3?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
                 return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
             })
-        };rn true;
+        };
+		return true; // 正しく修正
     }
     return false;
 }
