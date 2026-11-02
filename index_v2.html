@@ -890,7 +890,7 @@
 			display: block;
 		    cursor: pointer;
 		    margin: 4px 2px; /* 【調整】左右のマージンを少し詰める */
-		    padding: 8px 0px;
+		    padding: 8px 4px;
 		    border-radius: 20px;
 		    font-size: 13px; /* 文字サイズを微調整 */
 		    font-weight: 600;
@@ -898,7 +898,9 @@
 		    background: rgba(255, 255, 255, 0.1);
 		    border: 1px solid rgba(255, 255, 255, 0.4);
 		    text-align: center;
-		    word-break: break-all;
+			white-space: nowrap;       /* 改行を禁止して1行にする */
+		    overflow: hidden;          /* はみ出た部分を隠す */
+		    text-overflow: ellipsis;   /* はみ出た部分を「…」にする */
 		    transition: all 0.3s ease;
 		}
 
