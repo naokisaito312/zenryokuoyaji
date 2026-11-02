@@ -3313,14 +3313,22 @@ function loadFromStorage() {
             scoreSettings.tournament = { teamCount: 4 };
         }
         
-        // チーム数に応じた正しいスケジュールを適用
+        // チーム数に応じた正しいスケジュールを適用（保存データの対戦チームが一致するものがあれば引き継ぐ）
         const currentSchedule = getMatchSchedule();
-        stageMatches = data.stageMatches || {
-            stage1: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-            stage2: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-            stage3: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
-        };
-        return true;
+        stageMatches = {
+            stage1: currentSchedule.map(m => {
+                const saved = data.stageMatches?.stage1?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
+                return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
+            }),
+            stage2: currentSchedule.map(m => {
+                const saved = data.stageMatches?.stage2?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
+                return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
+            }),
+            stage3: currentSchedule.map(m => {
+                const saved = data.stageMatches?.stage3?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
+                return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
+            })
+        };rn true;
     }
     return false;
 }
@@ -3342,11 +3350,12 @@ function executeInit() {
     }));
     playerList = [];
     
-    // 試合データのリセット
+	// 試合データのリセット
+    const currentSchedule = getMatchSchedule();
     stageMatches = {
-        stage1: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-        stage2: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-        stage3: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
+        stage1: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+        stage2: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+        stage3: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
     };
 
     // 2. ローカルストレージを更新[cite: 4]
