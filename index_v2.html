@@ -112,8 +112,6 @@
 		    min-height:100%;
 		    
 		    padding-top: calc(72px + env(safe-area-inset-top));
-		    padding-left: 0px;
-		    padding-right: 0px;
 		    padding-bottom: calc(84px + env(safe-area-inset-bottom));
 		    
 		    overflow-y: auto; 
@@ -845,8 +843,10 @@
 		.team-grid {
 		    display: grid;
 		    grid-template-columns: repeat(4, 1fr);
-		    gap: 5px;
-		    width: 98%;
+		    gap: 4px; /* 隙間を少し詰めて均等配置 */
+		    width: 100%; /* 【修正】画面幅いっぱいに広げる */
+		    padding: 0 4px; /* 画面の端にくっつきすぎないように微小な余白を入れる場合 */
+		    box-sizing: border-box;
 		}
 		.team-grid.teams-5 {
 		    grid-template-columns: repeat(5, 1fr);
