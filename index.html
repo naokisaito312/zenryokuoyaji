@@ -112,8 +112,6 @@
 		    min-height:100%;
 		    
 		    padding-top: calc(72px + env(safe-area-inset-top));
-		    padding-left: 0px;
-		    padding-right: 0px;
 		    padding-bottom: calc(84px + env(safe-area-inset-bottom));
 		    
 		    overflow-y: auto; 
@@ -683,7 +681,8 @@
 		.team-a-bg { background-color: #248A3D !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
 		.team-b-bg { background-color: #A02525 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
 		.team-c-bg { background-color: #B29400 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
-		.team-d-bg { background-color: #101010 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1);  }
+		.team-d-bg { background-color: #101010 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
+		.team-e-bg { background-color: #0A84FF !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
 
 		/* チーム入力ボタン（セレクトボックス）のコンテナ */
 		.member-actions {
@@ -773,7 +772,7 @@
 		.lottery-grid {
 		    display: grid;
 		    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
-		    gap: 6px;
+		    gap: 4px;
 		    width: 100%;
 		    justify-items: center;
 		}
@@ -840,16 +839,29 @@
 		.btn-lottery.decided.team-c { background-color: #B29400 !important; box-shadow: 0 0 15px rgba(178, 148, 0, 0.5); }
 		.btn-lottery.decided.team-d { background-color: #3A3A3C !important; box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
 
+		/* --- チーム結果表示セクションの親 --- */
+		.team-result-section {
+		    width: 100% !important;
+		    box-sizing: border-box;
+		    padding: 0px;
+		    margin-bottom: 12px;
+		}
+		
 		/* チーム結果表示 */
 		.team-grid {
 		    display: grid;
 		    grid-template-columns: repeat(4, 1fr);
-		    gap: 5px;
-		    width: 98%;
+		    gap: 4px; /* 隙間を少し詰めて均等配置 */
+		    width: 100%; /* 【修正】画面幅いっぱいに広げる */
+		    padding: 0 4px; /* 画面の端にくっつきすぎないように微小な余白を入れる場合 */
+		    box-sizing: border-box;
+		}
+		.team-grid.teams-5 {
+		    grid-template-columns: repeat(5, 1fr);
 		}
 
 		.team-box {
-			min-width: 90px;
+		    min-width: 0; /* 【修正】狭い画面でも5列並ぶように最小幅の制限を解除 */
 		    min-height: 200px;
 		    padding: 0; /* ヘッダーとリストを分けるため0に */
 		    border-radius: 12px;
@@ -885,16 +897,18 @@
 		.clickable-name {
 			display: block;
 		    cursor: pointer;
-		    margin: 4px;
-		    padding: 8px 0px;
+		    margin: 4px 2px; /* 【調整】左右のマージンを少し詰める */
+		    padding: 8px 2px;
 		    border-radius: 20px;
 		    font-size: 13px; /* 文字サイズを微調整 */
-		    font-weight: 600;
+		    font-weight: 700;
 		    color: #FFFFFF;
-		    background: rgba(255, 255, 255, 0.1);
+		    background: rgba(0, 0, 0, 0.1);
 		    border: 1px solid rgba(255, 255, 255, 0.4);
 		    text-align: center;
-		    word-break: break-all;
+			white-space: nowrap;       /* 改行を禁止して1行にする */
+		    overflow: hidden;          /* はみ出た部分を隠す */
+		    text-overflow: ellipsis;   /* はみ出た部分を「…」にする */
 		    transition: all 0.3s ease;
 		}
 
@@ -1807,12 +1821,13 @@
 	    </div>
 
 	    <!-- 2. チーム分け結果表示エリア -->
-	    <div class="team-result-section">
-	        <div class="team-grid">
+		<div class="team-result-section">
+	        <div class="team-grid" id="teamGrid1">
 	            <div class="team-box team-a-bg"><h3>A</h3><div id="teamList1-A"></div></div>
 	            <div class="team-box team-b-bg"><h3>B</h3><div id="teamList1-B"></div></div>
 	            <div class="team-box team-c-bg"><h3>C</h3><div id="teamList1-C"></div></div>
 	            <div class="team-box team-d-bg"><h3>D</h3><div id="teamList1-D"></div></div>
+				<div class="team-box team-e-bg" id="teamBox1-E"><h3>E</h3><div id="teamList1-E"></div></div>
 	        </div>
 	    </div>
 
@@ -1835,12 +1850,13 @@
 	    </div>
 
 	    <!-- 2. チーム分け結果表示エリア -->
-	    <div class="team-result-section">
-	        <div class="team-grid">
+		<div class="team-result-section">
+	        <div class="team-grid" id="teamGrid2">
 	            <div class="team-box team-a-bg"><h3>A</h3><div id="teamList2-A"></div></div>
 	            <div class="team-box team-b-bg"><h3>B</h3><div id="teamList2-B"></div></div>
 	            <div class="team-box team-c-bg"><h3>C</h3><div id="teamList2-C"></div></div>
 	            <div class="team-box team-d-bg"><h3>D</h3><div id="teamList2-D"></div></div>
+	            <div class="team-box team-e-bg" id="teamBox2-E"><h3>E</h3><div id="teamList2-E"></div></div>
 	        </div>
 	    </div>
 
@@ -1863,12 +1879,13 @@
 	    </div>
 
 	    <!-- 2. チーム分け結果表示エリア -->
-	    <div class="team-result-section">
-	        <div class="team-grid">
+		<div class="team-result-section">
+	        <div class="team-grid" id="teamGrid3">
 	            <div class="team-box team-a-bg"><h3>A</h3><div id="teamList3-A"></div></div>
 	            <div class="team-box team-b-bg"><h3>B</h3><div id="teamList3-B"></div></div>
 	            <div class="team-box team-c-bg"><h3>C</h3><div id="teamList3-C"></div></div>
 	            <div class="team-box team-d-bg"><h3>D</h3><div id="teamList3-D"></div></div>
+	            <div class="team-box team-e-bg" id="teamBox3-E"><h3>E</h3><div id="teamList3-E"></div></div>
 	        </div>
 	    </div>
 
@@ -1921,6 +1938,18 @@
     	<header>
     		<h2>設定</h2>
     	</header>
+		<div class="settings-group">
+            <h3 class="settings-title">大会設定</h3>
+            <div class="settings-card">
+                <div class="setting-item">
+                    <span>チーム数</span>
+                    <select id="tournamentTeamCount" onchange="updateSetting('tournament', 'teamCount', this.value)" style="background: #000; color: #fff; border: 1px solid var(--text-sub); border-radius: 6px; padding: 6px 8px; font-size: 14px; font-weight: 600;">
+                        <option value="4">4チーム（20名）</option>
+                        <option value="5">5チーム（25名）</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class="settings-group">
             <h3 class="settings-title">勝ち点設定</h3>
             <div class="settings-card">
@@ -2001,9 +2030,9 @@
 		    <h3 class="settings-title">会計用</h3>
 		    <div class="settings-card">
 		        <!-- QR作成ボタン -->
-		        <div id="btnCreateQr" class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
-		            <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
-		        </div>
+				<div class="setting-item" style="flex-direction: column; align-items: center; gap: 4px; border-bottom: none;">
+				    <button onclick="handlegenerateKaikeiQR()" class="btn-sync">会計用QRコードを作成</button>
+				</div>
 		        
 		        <!-- QRコード表示エリア（display:none時のバグを防ぐため、ラッパーのスタイルを調整） -->
 		        <div id="qrCodeWrapper" class="qr-code-wrapper" style="display: none; flex-direction: column; align-items: center; gap: 16px; border-bottom: none; margin-bottom: 6px; width: 100%;">
@@ -2086,12 +2115,15 @@
 
 // スコア設定の初期値
 let scoreSettings = {
+    tournament: {
+        teamCount: 4 // デフォルト：4チーム開催（20名）
+    },
     mvp: { 
         win: 3, draw: 2, lose: 1,
         applyHandicap: true // MVP計算に得点加算を適用するか
     },
     kantoku: {
-        win: 4, draw: 3, lose: 1 // カントク専用勝ち点設定
+        win: 3, draw: 2, lose: 1 // カントク専用勝ち点設定
     },
     topScorer: { 
         applyHandicap: true // 得点王計算に得点加算を適用するか
@@ -2172,7 +2204,10 @@ let playerList = [];
 
 /***** プレイヤーの追加 *****/
 function addPlayer(targetUid) {
-	if (playerList.length >= 20) {
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const maxLimit = teamCount * 5; // 4チームなら20、5チームなら25
+
+	if (playerList.length >= maxLimit) {
 		return;
 	}
 
@@ -2195,7 +2230,8 @@ function removePlayer(targetUid) {
 }
 
 /***** 試合スケジュールと結果管理 *****/
-const MATCH_SCHEDULE = [
+// 4チーム用の対戦スケジュール（既存）
+const MATCH_SCHEDULE_4 = [
     { id: 1, t1: "A", t2: "B" }, { id: 2, t1: "C", t2: "D" },
     { id: 3, t1: "A", t2: "C" }, { id: 4, t1: "B", t2: "D" },
     { id: 5, t1: "A", t2: "D" }, { id: 6, t1: "B", t2: "C" },
@@ -2203,38 +2239,57 @@ const MATCH_SCHEDULE = [
     { id: 9, t1: "A", t2: "B" }, { id: 10, t1: "C", t2: "D" }
 ];
 
+// 5チーム用の対戦スケジュール（画像の対戦表を反映）
+const MATCH_SCHEDULE_5 = [
+    { id: 1, t1: "A", t2: "B" }, { id: 2, t1: "B", t2: "D" },
+    { id: 3, t1: "A", t2: "C" }, { id: 4, t1: "B", t2: "E" },
+    { id: 5, t1: "C", t2: "D" }, { id: 6, t1: "A", t2: "E" },
+    { id: 7, t1: "B", t2: "C" }, { id: 8, t1: "A", t2: "D" },
+    { id: 9, t1: "D", t2: "E" }, { id: 10, t1: "C", t2: "E" }
+];
+// 現在のチーム数に応じてスケジュールを切り替える関数
+function getMatchSchedule() {
+    const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    return teamCount === 5 ? MATCH_SCHEDULE_5 : MATCH_SCHEDULE_4;
+}
+
+const initialSchedule = getMatchSchedule();
 let stageMatches = {
-    stage1: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-    stage2: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-    stage3: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
+    stage1: initialSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+    stage2: initialSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+    stage3: initialSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
 };
-
-
 
 /***** チーム成績の自動集計（勝ち点 3-2-1） *****/
 function getTeamStats(stageNum) {
+    const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
     const stats = {
         A: { win: 0, draw: 0, lose: 0, points: 0 },
         B: { win: 0, draw: 0, lose: 0, points: 0 },
         C: { win: 0, draw: 0, lose: 0, points: 0 },
         D: { win: 0, draw: 0, lose: 0, points: 0 }
     };
+    if (teamCount === 5) {
+        stats.E = { win: 0, draw: 0, lose: 0, points: 0 };
+    }
 
     const stageKey = "stage" + stageNum;
     stageMatches[stageKey].forEach(match => {
         if (!match.played) return;
 
         if (match.s1 > match.s2) {
-            stats[match.t1].win++;  stats[match.t2].lose++;
+            if (stats[match.t1]) stats[match.t1].win++;  
+            if (stats[match.t2]) stats[match.t2].lose++;
         } else if (match.s1 < match.s2) {
-            stats[match.t1].lose++; stats[match.t2].win++;
+            if (stats[match.t1]) stats[match.t1].lose++; 
+            if (stats[match.t2]) stats[match.t2].win++;
         } else {
-            stats[match.t1].draw++; stats[match.t2].draw++;
+            if (stats[match.t1]) stats[match.t1].draw++; 
+            if (stats[match.t2]) stats[match.t2].draw++;
         }
     });
 
     for (let team in stats) {
-        // 勝利=3, 分け=2, 負け=1（全試合未消化なら0点）
         const played = stats[team].win + stats[team].draw + stats[team].lose;
         if (played > 0) {
             stats[team].points = (stats[team].win * 3) + (stats[team].draw * 2) + (stats[team].lose * 1);
@@ -2336,6 +2391,12 @@ function showPage(index) {
             inputs[4].value = scoreSettings.kantoku.draw ?? 3;
             inputs[5].value = scoreSettings.kantoku.lose ?? 1;
         }
+		// 大会設定のチーム数も同期
+        const teamCountSelect = document.getElementById('tournamentTeamCount');
+        if (teamCountSelect) {
+            teamCountSelect.value = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? scoreSettings.tournament.teamCount : 4;
+        }
+		
 		// スイッチの状態も同期（追加）
         const mvpCheck = document.getElementById('mvpHandicap');
         if (mvpCheck) mvpCheck.checked = scoreSettings.mvp.applyHandicap;
@@ -2387,15 +2448,21 @@ function renderMemberList() {
     const h2 = document.querySelector('#page0 h2');
     if (!area || !h2) return;
 
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const baseCounts = { A: 0, B: 0, C: 0, D: 0 };
+    if (teamCount === 5) baseCounts.E = 0;
+
     // 各ステージごとの現在のチーム人数をカウント
     const teamCounts = {
-        stage1: { A:0, B:0, C:0, D:0 },
-        stage2: { A:0, B:0, C:0, D:0 },
-        stage3: { A:0, B:0, C:0, D:0 }
+        stage1: { ...baseCounts },
+        stage2: { ...baseCounts },
+        stage3: { ...baseCounts }
     };
-
-    const currentCount = playerList.length;
-    h2.innerHTML = `メンバー管理 <span class="count-badge">${currentCount}/20</span>`;
+	
+    const maxLimit = teamCount * 5;
+	
+	const currentCount = playerList.length;
+    h2.innerHTML = `メンバー管理 <span class="count-badge">${currentCount}/${maxLimit}</span>`;
     
     // --- FLIPアニメーションの準備: 現在の位置を記録 ---
     const cards = area.querySelectorAll('.member-card');
@@ -2431,7 +2498,7 @@ function renderMemberList() {
         const age = calculateAge(member.birth);
 		const birthDisplay = member.birth ? `(${member.birth})` : "(未設定)";
 		const ageDisplay = age === "??" ? "" : `${age}歳 `;
-        const isFull = currentCount >= 20;
+        const isFull = currentCount >= maxLimit;
 
         const card = document.createElement('div');
 		card.className = `member-card ${isRegistered ? 'registered' : ''}`;
@@ -2584,8 +2651,10 @@ function togglePlayer(uid) {
             member.score1 = 0;  member.score2 = 0;  member.score3 = 0;
         }
     } else {
-        if (playerList.length >= 20) {
-            alert("登録上限（20名）に達しています。");
+		const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+        const maxLimit = teamCount * 5;
+        if (playerList.length >= maxLimit) {
+            alert(`登録上限（${maxLimit}名）に達しています。`);
             return;
         }
         addPlayer(uid);
@@ -2601,7 +2670,12 @@ function togglePlayer(uid) {
 /***** 選択肢の動的生成（上限5名チェック） *****/
 function createOptions(currentValue, counts) {
     let html = `<option value="">--</option>`;
-    ['A', 'B', 'C', 'D'].forEach(t => {
+    const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const teams = teamCount === 5 ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
+
+    teams.forEach(t => {
+        if (counts[t] === undefined) counts[t] = 0;
+
         // 自分が既にそのチームである、またはそのチームが5名未満なら表示
         if (currentValue === t || counts[t] < 5) {
             const selected = currentValue === t ? 'selected' : '';
@@ -2620,7 +2694,7 @@ function changeTeam(uid, stageKey, selectElement) {
     player[stageKey] = teamLetter;
 
     // クラスをリセット
-    selectElement.classList.remove('team-a-bg', 'team-b-bg', 'team-c-bg', 'team-d-bg');
+	selectElement.classList.remove('team-a-bg', 'team-b-bg', 'team-c-bg', 'team-d-bg', 'team-e-bg'); // 枠を追加
     
     // チームに応じたクラスを付与
     if (teamLetter) {
@@ -2749,7 +2823,27 @@ function renderStagePage(stageNum) {
     }
 
 	// --- チーム分け結果の描画部分 ---
-	['A', 'B', 'C', 'D'].forEach(t => {
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const teams = teamCount === 5 ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
+
+    // グリッドの列数クラスを切り替え
+    const teamGrid = document.getElementById(`teamGrid${stageNum}`);
+    if (teamGrid) {
+        if (teamCount === 5) {
+            teamGrid.classList.add('teams-5');
+        } else {
+            teamGrid.classList.remove('teams-5');
+        }
+    }
+
+    // Eチームのボックス自体の表示/非表示を切り替え
+    const eBox = document.getElementById(`teamBox${stageNum}-E`);
+    if (eBox) {
+        eBox.style.display = (teamCount === 5) ? 'block' : 'none';
+    }
+
+	// --- チーム分け結果の描画部分 ---
+	teams.forEach(t => {
         const listArea = document.getElementById(`teamList${stageNum}-${t}`);
         if (listArea) {
             const membersInTeam = participants.filter(p => p[stageKey] === t);
@@ -2767,7 +2861,11 @@ function runLottery(uid, stageNum, btnElement) {
     const stageKey = `stage${stageNum}`;
     const participants = memberList.filter(m => playerList.includes(m.uid));
     
-    const counts = { A: 0, B: 0, C: 0, D: 0 };
+	const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    const teams = teamCount === 5 ? ['A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D'];
+
+    const counts = {};
+    teams.forEach(t => counts[t] = 0);
     participants.forEach(p => { if(p[stageKey]) counts[p[stageKey]]++; });
 
     // =========================================================
@@ -3221,8 +3319,27 @@ function loadFromStorage() {
 		memberList = data.memberList || memberList;
         playerList = data.playerList || playerList;
         scoreSettings = data.scoreSettings || scoreSettings;
-        stageMatches = data.stageMatches || stageMatches;
-        return true;
+		if (!scoreSettings.tournament) {
+            scoreSettings.tournament = { teamCount: 4 };
+        }
+        
+        // チーム数に応じた正しいスケジュールを適用（保存データの対戦チームが一致するものがあれば引き継ぐ）
+        const currentSchedule = getMatchSchedule();
+        stageMatches = {
+            stage1: currentSchedule.map(m => {
+                const saved = data.stageMatches?.stage1?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
+                return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
+            }),
+            stage2: currentSchedule.map(m => {
+                const saved = data.stageMatches?.stage2?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
+                return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
+            }),
+            stage3: currentSchedule.map(m => {
+                const saved = data.stageMatches?.stage3?.find(sm => sm.id === m.id && sm.t1 === m.t1 && sm.t2 === m.t2);
+                return saved ? saved : { ...m, s1: 0, s2: 0, scorers: [], played: false };
+            })
+        };
+		return true; // 正しく修正
     }
     return false;
 }
@@ -3234,7 +3351,7 @@ function initData() {
 }
 
 function executeInit() {
-    // 1. すべてのデータを初期状態にリセット[cite: 4]
+    // 1. すべてのデータを初期状態にリセット
     memberList = members.map(m => ({
         ...m,
         isTitleHolder: false,
@@ -3244,14 +3361,21 @@ function executeInit() {
     }));
     playerList = [];
     
-    // 試合データのリセット
+    // 【追加】初期化時は大会のチーム数設定も確実に4チームにリセット（必要に応じてセレクトボックスの値も同期）
+    if (!scoreSettings.tournament) scoreSettings.tournament = {};
+    scoreSettings.tournament.teamCount = 4;
+    const teamCountSelect = document.getElementById('tournamentTeamCount');
+    if (teamCountSelect) teamCountSelect.value = "4";
+
+	// 試合データのリセット
+    const currentSchedule = getMatchSchedule();
     stageMatches = {
-        stage1: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-        stage2: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-        stage3: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
+        stage1: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+        stage2: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+        stage3: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
     };
 
-    // 2. ローカルストレージを更新[cite: 4]
+    // 2. ローカルストレージを更新
     saveToStorage();
 
     // 3. UIを閉じて名簿ページを再描画
@@ -3259,7 +3383,7 @@ function executeInit() {
     renderMemberList();
     showPage(0);
     
-    if (window.navigator.vibrate) window.navigator.vibrate([50, 50, 50]); // 完了の振動
+    if (window.navigator.vibrate) window.navigator.vibrate([50, 50, 50]);
 }
 
 function closeInitModal() {
@@ -3309,7 +3433,17 @@ function calculateMemberScore(member) {
 // 数値設定の更新
 function updateSetting(type, result, value) {
     scoreSettings[type][result] = parseInt(value) || 0;
-	saveToStorage();
+    
+    // チーム数が変更された場合、試合スケジュールを現在のチーム数に合わせて再生成
+    if (type === 'tournament' && result === 'teamCount') {
+        const newSchedule = getMatchSchedule();
+        ['stage1', 'stage2', 'stage3'].forEach(stageKey => {
+            // 既存の勝敗や得点入力を引き継ぐか、新規作成するかをここで調整
+            stageMatches[stageKey] = newSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }));
+        });
+    }
+
+    saveToStorage();
 }
 
 // オンオフ設定の更新
@@ -3521,18 +3655,16 @@ function handlegenerateKaikeiQR() {
     }
     const base64Data = btoa(binaryStr);
     
-    // 4. kaikei.html への絶対パスURLを生成
+	// 4. kaikei.html への絶対パスURLを生成
     const currentUrl = window.location.href;
     const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
     generatedKaikeiUrl = `${baseUrl}/kaikei.html?data=${base64Data}`;
     
     setTimeout(() => {
-        // 5. すでに表示されているQRコードがあればクリア
         const qrContainer = document.getElementById("qrcode");
         if (qrContainer) {
             qrContainer.innerHTML = "";
             
-            // 6. QRコードを生成
             new QRCode(qrContainer, {
                 text: generatedKaikeiUrl,
                 width: 220,
@@ -3541,10 +3673,12 @@ function handlegenerateKaikeiQR() {
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.L
             });
-        } else {
-            console.error("QRコードを表示する要素(#qrcode)が見つかりません。");
+
+            // ★ ここで成功時のみ表示を切り替える
+            document.getElementById('qrCodeWrapper').style.display = 'flex';
+            document.getElementById('btnCopyLink').style.display = 'flex';
         }
-    }, 100); 
+    }, 100);
 }
 
 /**
@@ -3564,25 +3698,6 @@ function copyKaikeiLink() {
         alert("コピーに失敗しました。");
     });
 }
-
-document.getElementById('btnCreateQr').addEventListener('click', function() {
-    // 1. まずSafari対策・文字化け対策済みの関数を実行してQRコードとURLを生成する
-    // handlegenerateKaikeiQR();
-
-    // ※ handlegenerateKaikeiQRの中でプレイヤーがいない場合の alert や return は処理されるため、
-    // ここでは生成されたあとのラッパーやコピーボタンの表示制御だけを行います。
-    
-    // 2. プレイヤーが存在して無事にURLが生成された場合のみ表示を切り替える
-    // (generatedKaikeiUrl は handlegenerateKaikeiQR 内で値が代入されるグローバル変数である前提)
-    if (typeof generatedKaikeiUrl !== 'undefined' && generatedKaikeiUrl) {
-        const qrWrapper = document.getElementById('qrCodeWrapper');
-        if (qrWrapper) qrWrapper.style.display = 'flex';
-        
-        const qrLink = document.getElementById('btnCopyLink');
-        if (qrLink) qrLink.style.display = 'flex';
-    }
-});
-
 
 // --- ナビゲーション・ドラッグ＆スナップ処理 ---
 const nav = document.getElementById('bottomNav');
