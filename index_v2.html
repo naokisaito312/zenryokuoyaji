@@ -683,7 +683,8 @@
 		.team-a-bg { background-color: #248A3D !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
 		.team-b-bg { background-color: #A02525 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
 		.team-c-bg { background-color: #B29400 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
-		.team-d-bg { background-color: #101010 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1);  }
+		.team-d-bg { background-color: #101010 !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
+		.team-e-bg { background-color: #0A84FF !important; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.1); }
 
 		/* チーム入力ボタン（セレクトボックス）のコンテナ */
 		.member-actions {
@@ -2657,7 +2658,7 @@ function changeTeam(uid, stageKey, selectElement) {
     player[stageKey] = teamLetter;
 
     // クラスをリセット
-    selectElement.classList.remove('team-a-bg', 'team-b-bg', 'team-c-bg', 'team-d-bg');
+	selectElement.classList.remove('team-a-bg', 'team-b-bg', 'team-c-bg', 'team-d-bg', 'team-e-bg'); // 枠を追加
     
     // チームに応じたクラスを付与
     if (teamLetter) {
