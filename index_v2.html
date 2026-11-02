@@ -1921,6 +1921,18 @@
     	<header>
     		<h2>設定</h2>
     	</header>
+		<div class="settings-group">
+            <h3 class="settings-title">大会設定</h3>
+            <div class="settings-card">
+                <div class="setting-item">
+                    <span>チーム数</span>
+                    <select id="tournamentTeamCount" onchange="updateSetting('tournament', 'teamCount', this.value)" style="background: #000; color: #fff; border: 1px solid var(--text-sub); border-radius: 6px; padding: 6px 8px; font-size: 14px; font-weight: 600;">
+                        <option value="4">4チーム（20名）</option>
+                        <option value="5">5チーム（25名）</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class="settings-group">
             <h3 class="settings-title">勝ち点設定</h3>
             <div class="settings-card">
@@ -2086,12 +2098,15 @@
 
 // スコア設定の初期値
 let scoreSettings = {
+    tournament: {
+        teamCount: 4 // デフォルト：4チーム開催（20名）
+    },
     mvp: { 
         win: 3, draw: 2, lose: 1,
         applyHandicap: true // MVP計算に得点加算を適用するか
     },
     kantoku: {
-        win: 4, draw: 3, lose: 1 // カントク専用勝ち点設定
+        win: 3, draw: 2, lose: 1 // カントク専用勝ち点設定
     },
     topScorer: { 
         applyHandicap: true // 得点王計算に得点加算を適用するか
@@ -2336,6 +2351,12 @@ function showPage(index) {
             inputs[4].value = scoreSettings.kantoku.draw ?? 3;
             inputs[5].value = scoreSettings.kantoku.lose ?? 1;
         }
+		// 大会設定のチーム数も同期
+        const teamCountSelect = document.getElementById('tournamentTeamCount');
+        if (teamCountSelect) {
+            teamCountSelect.value = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? scoreSettings.tournament.teamCount : 4;
+        }
+		
 		// スイッチの状態も同期（追加）
         const mvpCheck = document.getElementById('mvpHandicap');
         if (mvpCheck) mvpCheck.checked = scoreSettings.mvp.applyHandicap;
@@ -3221,6 +3242,9 @@ function loadFromStorage() {
 		memberList = data.memberList || memberList;
         playerList = data.playerList || playerList;
         scoreSettings = data.scoreSettings || scoreSettings;
+		if (!scoreSettings.tournament) {
+            scoreSettings.tournament = { teamCount: 4 };
+        }
         stageMatches = data.stageMatches || stageMatches;
         return true;
     }
