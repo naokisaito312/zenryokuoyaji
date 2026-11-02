@@ -853,7 +853,7 @@
 		}
 
 		.team-box {
-			min-width: 90px;
+		    min-width: 0; /* 【修正】狭い画面でも5列並ぶように最小幅の制限を解除 */
 		    min-height: 200px;
 		    padding: 0; /* ヘッダーとリストを分けるため0に */
 		    border-radius: 12px;
@@ -889,7 +889,7 @@
 		.clickable-name {
 			display: block;
 		    cursor: pointer;
-		    margin: 4px;
+		    margin: 4px 2px; /* 【調整】左右のマージンを少し詰める */
 		    padding: 8px 0px;
 		    border-radius: 20px;
 		    font-size: 13px; /* 文字サイズを微調整 */
