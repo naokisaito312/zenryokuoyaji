@@ -2614,8 +2614,10 @@ function togglePlayer(uid) {
             member.score1 = 0;  member.score2 = 0;  member.score3 = 0;
         }
     } else {
-        if (playerList.length >= 20) {
-            alert("登録上限（20名）に達しています。");
+		const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+        const maxLimit = teamCount * 5;
+        if (playerList.length >= maxLimit) {
+            alert(`登録上限（${maxLimit}名）に達しています。`);
             return;
         }
         addPlayer(uid);
