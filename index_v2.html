@@ -2220,7 +2220,8 @@ function removePlayer(targetUid) {
 }
 
 /***** 試合スケジュールと結果管理 *****/
-const MATCH_SCHEDULE = [
+// 4チーム用の対戦スケジュール（既存）
+const MATCH_SCHEDULE_4 = [
     { id: 1, t1: "A", t2: "B" }, { id: 2, t1: "C", t2: "D" },
     { id: 3, t1: "A", t2: "C" }, { id: 4, t1: "B", t2: "D" },
     { id: 5, t1: "A", t2: "D" }, { id: 6, t1: "B", t2: "C" },
@@ -2228,38 +2229,56 @@ const MATCH_SCHEDULE = [
     { id: 9, t1: "A", t2: "B" }, { id: 10, t1: "C", t2: "D" }
 ];
 
+// 5チーム用の対戦スケジュール（画像の対戦表を反映）
+const MATCH_SCHEDULE_5 = [
+    { id: 1, t1: "A", t2: "B" }, { id: 2, t1: "B", t2: "D" },
+    { id: 3, t1: "A", t2: "C" }, { id: 4, t1: "B", t2: "E" },
+    { id: 5, t1: "C", t2: "D" }, { id: 6, t1: "A", t2: "E" },
+    { id: 7, t1: "B", t2: "C" }, { id: 8, t1: "A", t2: "D" },
+    { id: 9, t1: "D", t2: "E" }, { id: 10, t1: "C", t2: "E" }
+];
+// 現在のチーム数に応じてスケジュールを切り替える関数
+function getMatchSchedule() {
+    const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
+    return teamCount === 5 ? MATCH_SCHEDULE_5 : MATCH_SCHEDULE_4;
+}
+
 let stageMatches = {
-    stage1: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-    stage2: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-    stage3: MATCH_SCHEDULE.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
+    stage1: MATCH_SCHEDULE_4.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+    stage2: MATCH_SCHEDULE_4.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+    stage3: MATCH_SCHEDULE_4.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
 };
-
-
 
 /***** チーム成績の自動集計（勝ち点 3-2-1） *****/
 function getTeamStats(stageNum) {
+    const teamCount = (scoreSettings.tournament && scoreSettings.tournament.teamCount) ? parseInt(scoreSettings.tournament.teamCount) : 4;
     const stats = {
         A: { win: 0, draw: 0, lose: 0, points: 0 },
         B: { win: 0, draw: 0, lose: 0, points: 0 },
         C: { win: 0, draw: 0, lose: 0, points: 0 },
         D: { win: 0, draw: 0, lose: 0, points: 0 }
     };
+    if (teamCount === 5) {
+        stats.E = { win: 0, draw: 0, lose: 0, points: 0 };
+    }
 
     const stageKey = "stage" + stageNum;
     stageMatches[stageKey].forEach(match => {
         if (!match.played) return;
 
         if (match.s1 > match.s2) {
-            stats[match.t1].win++;  stats[match.t2].lose++;
+            if (stats[match.t1]) stats[match.t1].win++;  
+            if (stats[match.t2]) stats[match.t2].lose++;
         } else if (match.s1 < match.s2) {
-            stats[match.t1].lose++; stats[match.t2].win++;
+            if (stats[match.t1]) stats[match.t1].lose++; 
+            if (stats[match.t2]) stats[match.t2].win++;
         } else {
-            stats[match.t1].draw++; stats[match.t2].draw++;
+            if (stats[match.t1]) stats[match.t1].draw++; 
+            if (stats[match.t2]) stats[match.t2].draw++;
         }
     });
 
     for (let team in stats) {
-        // 勝利=3, 分け=2, 負け=1（全試合未消化なら0点）
         const played = stats[team].win + stats[team].draw + stats[team].lose;
         if (played > 0) {
             stats[team].points = (stats[team].win * 3) + (stats[team].draw * 2) + (stats[team].lose * 1);
@@ -3292,7 +3311,14 @@ function loadFromStorage() {
 		if (!scoreSettings.tournament) {
             scoreSettings.tournament = { teamCount: 4 };
         }
-        stageMatches = data.stageMatches || stageMatches;
+        
+        // チーム数に応じた正しいスケジュールを適用
+        const currentSchedule = getMatchSchedule();
+        stageMatches = data.stageMatches || {
+            stage1: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+            stage2: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+            stage3: currentSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
+        };
         return true;
     }
     return false;
@@ -3380,7 +3406,17 @@ function calculateMemberScore(member) {
 // 数値設定の更新
 function updateSetting(type, result, value) {
     scoreSettings[type][result] = parseInt(value) || 0;
-	saveToStorage();
+    
+    // チーム数が変更された場合、試合スケジュールを現在のチーム数に合わせて再生成
+    if (type === 'tournament' && result === 'teamCount') {
+        const newSchedule = getMatchSchedule();
+        ['stage1', 'stage2', 'stage3'].forEach(stageKey => {
+            // 既存の勝敗や得点入力を引き継ぐか、新規作成するかをここで調整
+            stageMatches[stageKey] = newSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }));
+        });
+    }
+
+    saveToStorage();
 }
 
 // オンオフ設定の更新
