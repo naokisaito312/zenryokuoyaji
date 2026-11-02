@@ -2243,10 +2243,11 @@ function getMatchSchedule() {
     return teamCount === 5 ? MATCH_SCHEDULE_5 : MATCH_SCHEDULE_4;
 }
 
+const initialSchedule = getMatchSchedule();
 let stageMatches = {
-    stage1: MATCH_SCHEDULE_4.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-    stage2: MATCH_SCHEDULE_4.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
-    stage3: MATCH_SCHEDULE_4.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
+    stage1: initialSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+    stage2: initialSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false })),
+    stage3: initialSchedule.map(m => ({ ...m, s1: 0, s2: 0, scorers: [], played: false }))
 };
 
 /***** チーム成績の自動集計（勝ち点 3-2-1） *****/
